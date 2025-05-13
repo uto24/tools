@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>তথ্য থেকে TXT ও PNG জেনারেটর</title>
+    <!-- html2canvas লাইব্রেরি -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 25px;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 25px 35px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            width: 100%;
+            max-width: 750px;
+        }
+        h1 {
+            color: #1a237e;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 22px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #3f51b5;
+        }
+        input[type="text"],
+        select,
+        textarea {
+            width: calc(100% - 24px);
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1em;
+            color: #495057;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        input[type="text"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .checkbox-group label {
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            color: #495057;
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+         .checkbox-group label:hover {
+            background-color: #e9ecef;
+        }
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            accent-color: #3f51b5;
+        }
+        fieldset {
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            background-color: #fdfdff;
+        }
+        legend {
+            font-weight: 600;
+            color: #3f51b5;
+            padding: 0 12px;
+            font-size: 1.1em;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .button-group button {
+            flex-grow: 1;
+            background-image: linear-gradient(to right, #5c6bc0 0%, #3f51b5 100%);
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        .button-group button:hover {
+            background-image: linear-gradient(to right, #3f51b5 0%, #1a237e 100%);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        .button-group button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+         .button-group button.png-btn { /* PNG বাটনের জন্য ভিন্ন রঙ */
+            background-image: linear-gradient(to right, #66bb6a 0%, #388e3c 100%);
+        }
+        .button-group button.png-btn:hover {
+            background-image: linear-gradient(to right, #388e3c 0%, #1b5e20 100%);
+        }
+        .date-display {
+            background-color: #e3f2fd;
+            padding: 12px;
+            border-radius: 6px;
+            color: #1e88e5;
+            border: 1px solid #bbdefb;
+            text-align: center;
+            font-size: 1.05em;
+        }
+        #outputPreview {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            display: none;
+        }
+        #outputPreview h3 {
+            margin-top: 0;
+            color: #2e7d32;
+            font-size: 1.3em;
+            border-bottom: 1px solid #a5d6a7;
+            padding-bottom: 8px;
+        }
+        #outputPreview pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Menlo', 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 0.95em;
+            color: #37474f;
+        }
+
+        /* PNG রেন্ডারিং এর জন্য লুকানো কন্টেইনার */
+        #imageRenderContainer {
+            position: absolute;
+            left: -9999px; /* স্ক্রিনের বাইরে রাখুন */
+            top: -9999px;
+            padding: 20px;
+            background-color: white; /* ছবির ব্যাকগ্রাউন্ড সাদা হবে */
+            border: 1px solid #ccc;
+            font-family: Arial, sans-serif; /* ছবির জন্য একটি সাধারণ ফন্ট */
+            font-size: 14px;
+            color: black;
+            width: 600px; /* ছবির প্রস্থ নির্ধারণ করুন */
+            box-sizing: border-box;
+        }
+        #imageRenderContainer h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        #imageRenderContainer p {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+        #imageRenderContainer strong {
+            color: #555;
+        }
+        #imageRenderContainer .disclaimer {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>তথ্য থেকে ফাইল জেনারেটর</h1>
+        <form id="dataForm">
+            <div class="form-group">
+                <label for="title">টাইটেল (Title):</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <fieldset>
+                <legend>সাবমিটেড প্ল্যাটফর্ম (Submitted Platform)</legend>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="platform" value="Tiktok"> Tiktok</label>
+                    <label><input type="checkbox" name="platform" value="Tiktok2"> Tiktok2</label>
+                    <label><input type="checkbox" name="platform" value="Facebook"> Facebook</label>
+                    <label><input type="checkbox" name="platform" value="Facebookk2"> Facebookk2</label>
+                    <label><input type="checkbox" name="platform" value="Facebook3"> Facebook3</label>
+                    <label><input type="checkbox" name="platform" value="Youtube"> Youtube</label>
+                    <label><input type="checkbox" name="platform" value="Youtube1"> Youtube1</label>
+                    <label><input type="checkbox" name="platform" value="Instagram"> Instagram</label>
+                    <label><input type="checkbox" name="platform" value="Instagram1"> Instagram1</label>
+                </div>
+            </fieldset>
+
+            <div class="form-group">
+                <label>তারিখ (Date):</label>
+                <div id="currentDate" class="date-display"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="type">টাইপ (Type):</label>
+                <select id="type" name="type">
+                    <option value="Video">ভিডিও (Video)</option>
+                    <option value="Short">শর্ট (Short)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="purpose">উদ্দেশ্য (Purpose):</label>
+                <textarea id="purpose" name="purpose" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="originalLocation">অরিজিনাল লোকেশন (Original Location):</label>
+                <input type="text" id="originalLocation" name="originalLocation">
+            </div>
+
+            <div class="button-group">
+                <button type="button" onclick="generateAndDownload('txt')">TXT তৈরি ও ডাউনলোড</button>
+                <button type="button" class="png-btn" onclick="generateAndDownload('png')">PNG তৈরি ও ডাউনলোড</button>
+            </div>
+        </form>
+
+        <div id="outputPreview">
+            <h3>তথ্যের প্রিভিউ:</h3>
+            <pre id="dataPreviewText"></pre>
+        </div>
+    </div>
+
+    <!-- এই div টি PNG ইমেজ রেন্ডার করার জন্য ব্যবহার করা হবে, এটি লুকানো থাকবে -->
+    <div id="imageRenderContainer">
+        <h2 id="imgRenderTitle"></h2>
+        <p><strong>সাবমিটেড প্ল্যাটফর্ম:</strong> <span id="imgRenderPlatforms"></span></p>
+        <p><strong>তারিখ:</strong> <span id="imgRenderDate"></span></p>
+        <p><strong>টাইপ:</strong> <span id="imgRenderType"></span></p>
+        <p><strong>উদ্দেশ্য:</strong> <span id="imgRenderPurpose"></span></p>
+        <p><strong>অরিজিনাল লোকেশন:</strong> <span id="imgRenderLocation"></span></p>
+        <div class="disclaimer">
+            <p><strong>বিশেষ নোট ও দাবি পরিত্যাগ:</strong></p>
+            <p>১. এই ডকুমেন্টে প্রদত্ত সকল তথ্য ব্যবহারকারীর দ্বারা সরবরাহ করা হয়েছে।</p>
+            <p>২. এই ফাইলটি শুধুমাত্র তথ্য সংরক্ষণ এবং রেফারেন্সের উদ্দেশ্যে তৈরি করা হয়েছে।</p>
+            <p>৩. তথ্যের কোনো অপব্যবহারের জন্য কর্তৃপক্ষ দায়ী থাকবে না।</p>
+            <p>৪. সমস্ত বিষয়বস্তুর মূল স্বত্বাধিকার তার নিজ নিজ মালিকের কাছে সংরক্ষিত।</p>
+        </div>
+    </div>
+
+
+    <script>
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString('bn-BD', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        const fileDate = today.toISOString().slice(0,10); // YYYY-MM-DD
+
+        document.getElementById('currentDate').textContent = formattedDate;
+
+        function getFormData() {
+            const title = document.getElementById('title').value.trim();
+            const purpose = document.getElementById('purpose').value.trim();
+            const originalLocation = document.getElementById('originalLocation').value.trim();
+            const type = document.getElementById('type').value;
+
+            const selectedPlatformsArray = Array.from(document.querySelectorAll('input[name="platform"]:checked'))
+                                         .map(cb => cb.value);
+            const selectedPlatforms = selectedPlatformsArray.length > 0 ? selectedPlatformsArray.join(', ') : 'কোনো প্ল্যাটফর্ম নির্বাচিত হয়নি';
+
+            if (!title) {
+                alert("অনুগ্রহ করে টাইটেল পূরণ করুন।");
+                return null;
+            }
+            if (!purpose) {
+                alert("অনুগ্রহ করে উদ্দেশ্য পূরণ করুন।");
+                return null;
+            }
+
+            return { title, purpose, originalLocation, type, selectedPlatforms, formattedDate, fileDate };
+        }
+
+        function generateTextContent(data) {
+            const noteAndDisclaimer = `
+বিশেষ নোট ও দাবি পরিত্যাগ:
+---------------------------------
+১. এই ডকুমেন্টে প্রদত্ত সকল তথ্য ব্যবহারকারীর দ্বারা সরবরাহ করা হয়েছে।
+২. এই ফাইলটি শুধুমাত্র তথ্য সংরক্ষণ এবং রেফারেন্সের উদ্দেশ্যে তৈরি করা হয়েছে।
+৩. তথ্যের কোনো অপব্যবহারের জন্য কর্তৃপক্ষ দায়ী থাকবে না।
+৪. সমস্ত বিষয়বস্তুর মূল স্বত্বাধিকার তার নিজ নিজ মালিকের কাছে সংরক্ষিত।
+            `;
+
+            return `
+টাইটেল: ${data.title}
+সাবমিটেড প্ল্যাটফর্ম: ${data.selectedPlatforms}
+তারিখ: ${data.formattedDate}
+টাইপ: ${data.type}
+উদ্দেশ্য: ${data.purpose}
+অরিজিনাল লোকেশন: ${data.originalLocation || 'N/A'}
+${noteAndDisclaimer}
+            `.trim();
+        }
+
+        function generateFilename(title, dateStr, extension) {
+            const safeTitle = title.replace(/[^\u0980-\u09FF\u0400-\u04FFa-zA-Z0-9\s_.-]/g, '').replace(/\s+/g, '_');
+            return `${dateStr}_${safeTitle || 'Untitled'}.${extension}`;
+        }
+
+        function downloadFile(content, filename, contentType) {
+            const a = document.createElement('a');
+            const blob = new Blob([content], { type: contentType });
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+        }
+
+        async function generateAndDownload(format) {
+            const data = getFormData();
+            if (!data) return;
+
+            const textContent = generateTextContent(data);
+
+            // প্রিভিউ আপডেট করুন
+            document.getElementById('dataPreviewText').textContent = textContent;
+            document.getElementById('outputPreview').style.display = 'block';
+
+            const filename = generateFilename(data.title, data.fileDate, format);
+
+            if (format === 'txt') {
+                downloadFile(textContent, filename, 'text/plain;charset=utf-8');
+            } else if (format === 'png') {
+                // PNG রেন্ডারিং এর জন্য কন্টেইনারে ডেটা সেট করুন
+                document.getElementById('imgRenderTitle').textContent = "কনটেন্ট রিপোর্ট: " + data.title;
+                document.getElementById('imgRenderPlatforms').textContent = data.selectedPlatforms;
+                document.getElementById('imgRenderDate').textContent = data.formattedDate;
+                document.getElementById('imgRenderType').textContent = data.type;
+                document.getElementById('imgRenderPurpose').textContent = data.purpose;
+                document.getElementById('imgRenderLocation').textContent = data.originalLocation || 'N/A';
+
+                const elementToRender = document.getElementById('imageRenderContainer');
+                
+                try {
+                    const canvas = await html2canvas(elementToRender, {
+                        scale: 2, // উন্নত রেজোলিউশনের জন্য
+                        useCORS: true, // যদি ছবিতে বাহ্যিক কোন সোর্স থাকে (এখানে নেই)
+                        logging: true // ডিবাগিং এর জন্য
+                    });
+                    const dataUrl = canvas.toDataURL('image/png');
+                    
+                    const a = document.createElement('a');
+                    a.href = dataUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+
+                } catch (error) {
+                    console.error('PNG জেনারেট করতে সমস্যা:', error);
+                    alert('PNG ইমেজ তৈরি করতে সমস্যা হয়েছে। বিস্তারিত জানতে কনসোল দেখুন।');
+                }
+            }
+        }
+    </script>
+</body>
+  </html>
