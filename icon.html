@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Free Font Awesome Icon Database (with Keywords)</title>
+    <!-- Font Awesome CDN (Free version 6.x.x) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .sub-heading {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 25px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        .search-box:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+            min-height: 90px;
+        }
+
+        .icon-item:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .icon-item.selected {
+            background-color: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        .icon-item.selected .icon-preview,
+        .icon-item.selected .icon-name {
+            color: white;
+        }
+
+        .icon-preview {
+            font-size: 24px;
+            margin-bottom: 6px;
+            color: #555;
+            line-height: 1;
+        }
+
+        .icon-name {
+            font-size: 10px;
+            color: #333;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+
+        .copy-area {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 6px;
+            font-family: "Courier New", Courier, monospace;
+            display: none;
+        }
+        .copy-area h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #bdc3c7;
+        }
+        #code-to-copy {
+            white-space: pre-wrap;
+            word-break: break-all;
+            background-color: #34495e;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        #copy-button {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        #copy-button:hover {
+            background-color: #2980b9;
+        }
+        #copy-button:active {
+            background-color: #1f6392;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #777;
+        }
+         .icon-count {
+            text-align: center;
+            font-size: 0.85em;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .icon-source-note {
+            text-align: center;
+            font-size: 0.85em;
+            color: #777;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .icon-source-note a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .icon-source-note a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Enhanced Free Font Awesome Icons</h1>
+        <p class="sub-heading">(Large Curated Database with Keywords)</p>
+        <div id="icon-count" class="icon-count"></div>
+
+
+        <input type="text" id="search-input" class="search-box" placeholder="Search icons by name, class, or keyword (e.g., user, avatar, settings, social)...">
+
+        <div id="icon-grid" class="icon-grid">
+            <!-- Icons will be loaded here by JavaScript -->
+        </div>
+        <div id="no-results-message" class="no-results" style="display: none;">No icons found matching your search.</div>
+
+        <div id="copy-area" class="copy-area">
+            <h3>Selected Icon Code:</h3>
+            <pre id="code-to-copy"></pre>
+            <button id="copy-button">Copy Code</button>
+        </div>
+
+        <p class="icon-source-note">
+            This is a large, curated sample list of Font Awesome Free icons with keywords for enhanced search. For the complete set and latest icons, please visit the
+            <a href="https://fontawesome.com/search?m=free" target="_blank" rel="noopener noreferrer">Official Font Awesome Gallery</a>.
+        </p>
+    </div>
+
+    <script>
+        const iconGrid = document.getElementById('icon-grid');
+        const searchInput = document.getElementById('search-input');
+        const copyArea = document.getElementById('copy-area');
+        const codeToCopyPre = document.getElementById('code-to-copy');
+        const copyButton = document.getElementById('copy-button');
+        const noResultsMessage = document.getElementById('no-results-message');
+        const iconCountDisplay = document.getElementById('icon-count');
+
+        let selectedIconItem = null;
+
+        // --- ICON DATA WITH KEYWORDS ---
+        // Each icon now has a `keywords` array for better searching.
+        // This is a sample; a complete list would be much larger.
+        const faIcons = [
+            // Profile & Avatar related
+            { name: "User", class: "fa-solid fa-user", keywords: ["profile", "avatar", "human", "person", "account", "member", "login", "individual"] },
+            { name: "User Circle", class: "fa-solid fa-circle-user", keywords: ["profile", "avatar", "human", "person", "account", "login", "round"] },
+            { name: "Users", class: "fa-solid fa-users", keywords: ["group", "team", "people", "community", "multiple users"] },
+            { name: "User Group", class: "fa-solid fa-user-group", keywords: ["team", "people", "community", "collaboration", "multiple"] },
+            { name: "User Tie (Professional)", class: "fa-solid fa-user-tie", keywords: ["profile", "avatar", "professional", "business", "employee", "suit", "formal"] },
+            { name: "User Doctor", class: "fa-solid fa-user-doctor", keywords: ["profile", "medical", "physician", "health", "avatar", "medic"] },
+            { name: "Id Badge", class: "fa-solid fa-id-badge", keywords: ["identification", "profile", "avatar", "employee", "staff", "name tag"] },
+            { name: "Id Card", class: "fa-solid fa-id-card", keywords: ["identification", "profile", "avatar", "driver license", "credentials"] },
+            { name: "Address Card", class: "fa-solid fa-address-card", keywords: ["contact", "profile", "vcard", "business card", "about"] },
+            { name: "Image Portrait", class: "fa-solid fa-image-portrait", keywords: ["avatar", "profile picture", "photo", "selfie", "human face"] },
+
+            // Common UI & Actions
+            { name: "Home (House)", class: "fa-solid fa-house", keywords: ["main", "dashboard", "frontpage", "building", "residence", "start", "welcome"] },
+            { name: "Gear (Cog)", class: "fa-solid fa-gear", keywords: ["settings", "options", "configuration", "setup", "admin", "controls", "preferences", "tool"] },
+            { name: "Search (Magnifying Glass)", class: "fa-solid fa-magnifying-glass", keywords: ["find", "lookup", "explore", "discover", "query", "inspect", "zoom"] },
+            { name: "Plus", class: "fa-solid fa-plus", keywords: ["add", "new", "create", "increment", "expand"] },
+            { name: "Minus", class: "fa-solid fa-minus", keywords: ["remove", "delete", "subtract", "decrement", "collapse", "contract"] },
+            { name: "Times (XMark, Close)", class: "fa-solid fa-xmark", keywords: ["close", "cancel", "exit", "incorrect", "error", "delete", "stop"] },
+            { name: "Check", class: "fa-solid fa-check", keywords: ["correct", "done", "ok", "yes", "confirm", "success", "tick", "validate"] },
+            { name: "Check Circle", class: "fa-solid fa-circle-check", keywords: ["correct", "done", "ok", "yes", "confirm", "success", "complete", "valid"] },
+            { name: "Times Circle (XMark Circle)", class: "fa-solid fa-circle-xmark", keywords: ["close", "cancel", "error", "incorrect", "invalid", "failed"] },
+            { name: "Edit (Pen to Square)", class: "fa-solid fa-pen-to-square", keywords: ["modify", "update", "write", "change", "revise", "compose"] },
+            { name: "Pen", class: "fa-solid fa-pen", keywords: ["write", "draw", "edit", "signature", "author"] },
+            { name: "Trash", class: "fa-solid fa-trash-can", keywords: ["delete", "remove", "bin", "erase", "discard", "garbage"] },
+            { name: "Copy", class: "fa-solid fa-copy", keywords: ["duplicate", "clone", "file", "document"] },
+            { name: "Paste", class: "fa-solid fa-paste", keywords: ["clipboard", "insert", "document"] },
+            { name: "Save (Floppy Disk)", class: "fa-solid fa-floppy-disk", keywords: ["write", "disk", "store", "record", "data"] },
+            { name: "Print", class: "fa-solid fa-print", keywords: ["document", "paper", "hard copy", "office"] },
+            { name: "Download", class: "fa-solid fa-download", keywords: ["import", "get", "save", "transfer", "arrow"] },
+            { name: "Upload", class: "fa-solid fa-upload", keywords: ["export", "send", "share", "transfer", "arrow"] },
+            { name: "Share", class: "fa-solid fa-share", keywords: ["send", "social", "connect", "network"] },
+            { name: "Share Nodes", class: "fa-solid fa-share-nodes", keywords: ["connect", "social media", "network", "distribute"] },
+            { name: "External Link", class: "fa-solid fa-arrow-up-right-from-square", keywords: ["new tab", "open", "hyperlink", "url", "web"] },
+            { name: "Link", class: "fa-solid fa-link", keywords: ["chain", "connect", "hyperlink", "url", "attach"] },
+            { name: "Unlink (Link Slash)", class: "fa-solid fa-link-slash", keywords: ["break", "disconnect", "remove link", "detach"] },
+            { name: "Eye", class: "fa-solid fa-eye", keywords: ["view", "see", "visible", "show", "watch", "preview"] },
+            { name: "Eye Slash", class: "fa-solid fa-eye-slash", keywords: ["hide", "invisible", "unseen", "toggle", "hidden"] },
+            { name: "Ellipsis Vertical", class: "fa-solid fa-ellipsis-vertical", keywords: ["menu", "options", "more", "kebab menu", "dots"] },
+            { name: "Ellipsis Horizontal", class: "fa-solid fa-ellipsis", keywords: ["menu", "options", "more", "dots", "pending"] },
+            { name: "Bars (Menu)", class: "fa-solid fa-bars", keywords: ["navigation", "hamburger", "options", "list", "toggle"] },
+            { name: "Filter", class: "fa-solid fa-filter", keywords: ["sort", "options", "refine", "selection", "funnel"] },
+            { name: "Sliders", class: "fa-solid fa-sliders", keywords: ["settings", "controls", "adjust", "preferences", "equalizer"] },
+            { name: "Wrench", class: "fa-solid fa-wrench", keywords: ["tool", "settings", "fix", "repair", "spanner", "admin"] },
+            { name: "Tools", class: "fa-solid fa-screwdriver-wrench", keywords: ["settings", "admin", "repair", "fix", "instruments"] },
+            { name: "List", class: "fa-solid fa-list-ul", keywords: ["todo", "checklist", "tasks", "ordered", "items", "bullet"] },
+            { name: "Sign Out (Right From Bracket)", class: "fa-solid fa-right-from-bracket", keywords: ["logout", "exit", "leave", "account"] },
+            { name: "Sign In (Right To Bracket)", class: "fa-solid fa-right-to-bracket", keywords: ["login", "enter", "account", "access"] },
+            { name: "Power Off", class: "fa-solid fa-power-off", keywords: ["on", "off", "shutdown", "reboot", "switch", "electronics"] },
+
+            // Navigation & Arrows
+            { name: "Arrow Left", class: "fa-solid fa-arrow-left", keywords: ["back", "previous", "navigation", "direction"] },
+            { name: "Arrow Right", class: "fa-solid fa-arrow-right", keywords: ["forward", "next", "navigation", "direction"] },
+            { name: "Arrow Up", class: "fa-solid fa-arrow-up", keywords: ["scroll", "top", "direction", "jump"] },
+            { name: "Arrow Down", class: "fa-solid fa-arrow-down", keywords: ["scroll", "bottom", "direction", "download"] },
+            { name: "Chevron Left", class: "fa-solid fa-chevron-left", keywords: ["back", "previous", "less", "accordion", "carousel"] },
+            { name: "Chevron Right", class: "fa-solid fa-chevron-right", keywords: ["forward", "next", "more", "accordion", "carousel"] },
+            { name: "Location Dot", class: "fa-solid fa-location-dot", keywords: ["map", "marker", "pin", "address", "gps", "place", "navigation"] },
+            { name: "Compass", class: "fa-regular fa-compass", keywords: ["navigation", "direction", "safari", "travel", "map", "orientation"] },
+            { name: "Map", class: "fa-regular fa-map", keywords: ["location", "navigation", "travel", "gps", "route", "direction"] },
+
+            // Communication
+            { name: "Envelope", class: "fa-solid fa-envelope", keywords: ["email", "mail", "message", "contact", "letter", "notification"] },
+            { name: "Phone", class: "fa-solid fa-phone", keywords: ["call", "telephone", "contact", "support", "voice"] },
+            { name: "Comment", class: "fa-regular fa-comment", keywords: ["chat", "message", "feedback", "bubble", "speak", "remark"] },
+            { name: "Comments", class: "fa-regular fa-comments", keywords: ["chat", "discussion", "forum", "feedback", "conversation"] },
+            { name: "At", class: "fa-solid fa-at", keywords: ["email", "mention", "address", "handle"] },
+            { name: "Hashtag", class: "fa-solid fa-hashtag", keywords: ["tag", "social media", "pound", "trending", "topic"] },
+
+            // Files & Folders
+            { name: "File", class: "fa-regular fa-file", keywords: ["document", "page", "text", "new", "item"] },
+            { name: "Folder", class: "fa-regular fa-folder", keywords: ["directory", "storage", "container", "files", "group"] },
+            { name: "Folder Open", class: "fa-regular fa-folder-open", keywords: ["directory", "browse", "contents", "files"] },
+
+            // Time & Date
+            { name: "Calendar", class: "fa-regular fa-calendar", keywords: ["date", "month", "year", "schedule", "event", "appointment"] },
+            { name: "Calendar Days", class: "fa-solid fa-calendar-days", keywords: ["date", "schedule", "event", "specific day", "agenda"] },
+            { name: "Clock", class: "fa-regular fa-clock", keywords: ["time", "watch", "hour", "minute", "schedule", "timer", "history"] },
+
+            // Alerts & Notifications
+            { name: "Bell", class: "fa-regular fa-bell", keywords: ["alert", "notification", "reminder", "alarm", "sound"] },
+            { name: "Exclamation Triangle", class: "fa-solid fa-triangle-exclamation", keywords: ["warning", "alert", "danger", "error", "important", "caution"] },
+            { name: "Info Circle", class: "fa-solid fa-circle-info", keywords: ["information", "details", "help", "more", "about"] },
+            { name: "Question Circle", class: "fa-regular fa-circle-question", keywords: ["help", "support", "faq", "query", "information", "unknown"] },
+            { name: "Flag", class: "fa-regular fa-flag", keywords: ["report", "mark", "notification", "country", "nationality", "banner"] },
+
+            // Media & Content
+            { name: "Image", class: "fa-regular fa-image", keywords: ["photo", "picture", "graphic", "art", "landscape", "gallery"] },
+            { name: "Camera", class: "fa-solid fa-camera", keywords: ["photo", "picture", "record", "video", "capture"] },
+            { name: "Play", class: "fa-solid fa-play", keywords: ["start", "run", "music", "video", "media", "begin"] },
+            { name: "Pause", class: "fa-solid fa-pause", keywords: ["hold", "stop", "music", "video", "media", "wait"] },
+            { name: "Music", class: "fa-solid fa-music", keywords: ["song", "audio", "sound", "note", "melody", "track"] },
+            { name: "Video", class: "fa-solid fa-video", keywords: ["movie", "film", "record", "camera", "media", "play"] },
+            { name: "Microphone", class: "fa-solid fa-microphone", keywords: ["record", "voice", "sound", "audio", "speak", "podcast"] },
+            { name: "Book", class: "fa-solid fa-book", keywords: ["read", "library", "study", "learn", "education", "novel", "textbook", "documentation"] },
+
+            // Business & Finance
+            { name: "Star", class: "fa-regular fa-star", keywords: ["favorite", "rating", "highlight", "save", "important", "achievement"] },
+            { name: "Heart", class: "fa-regular fa-heart", keywords: ["love", "like", "favorite", "emotion", "save", "valentine"] },
+            { name: "Thumbs Up", class: "fa-regular fa-thumbs-up", keywords: ["like", "approve", "agree", "good", "positive", "vote"] },
+            { name: "Thumbs Down", class: "fa-regular fa-thumbs-down", keywords: ["dislike", "disapprove", "disagree", "bad", "negative", "vote"] },
+            { name: "Tag", class: "fa-solid fa-tag", keywords: ["label", "category", "price", "keyword", "mark"] },
+            { name: "Building", class: "fa-regular fa-building", keywords: ["office", "company", "work", "architecture", "business", "city", "construction"] },
+            { name: "Briefcase", class: "fa-solid fa-briefcase", keywords: ["work", "business", "job", "portfolio", "office", "luggage", "case"] },
+            { name: "Dollar Sign", class: "fa-solid fa-dollar-sign", keywords: ["money", "currency", "payment", "cash", "usd", "finance", "price"] },
+            { name: "Credit Card", class: "fa-regular fa-credit-card", keywords: ["payment", "purchase", "money", "buy", "checkout", "finance", "visa", "mastercard"] },
+            { name: "Chart Bar", class: "fa-regular fa-chart-bar", keywords: ["graph", "analytics", "data", "stats", "report", "statistics"] },
+            { name: "Lightbulb", class: "fa-regular fa-lightbulb", keywords: ["idea", "inspiration", "innovation", "solution", "think", "tip"] },
+            { name: "Shopping Cart", class: "fa-solid fa-cart-shopping", keywords: ["buy", "purchase", "checkout", "ecommerce", "store", "basket", "order"] },
+            { name: "Shop", class: "fa-solid fa-shop", keywords: ["store", "buy", "ecommerce", "market", "building", "retail"] },
+
+            // Devices & Hardware
+            { name: "Lock", class: "fa-solid fa-lock", keywords: ["secure", "security", "password", "private", "protect", "admin"] },
+            { name: "Unlock", class: "fa-solid fa-unlock", keywords: ["open", "public", "access", "security", "unsecure"] },
+            { name: "Key", class: "fa-solid fa-key", keywords: ["password", "login", "access", "secure", "unlock", "secret"] },
+            { name: "Database", class: "fa-solid fa-database", keywords: ["storage", "data", "server", "sql", "information", "memory"] },
+            { name: "Server", class: "fa-solid fa-server", keywords: ["network", "storage", "computer", "data", "hosting"] },
+            { name: "Desktop", class: "fa-solid fa-desktop", keywords: ["computer", "monitor", "pc", "screen", "device", "workstation"] },
+            { name: "Laptop", class: "fa-solid fa-laptop", keywords: ["computer", "pc", "notebook", "device", "macbook", "portable"] },
+            { name: "Mobile Phone", class: "fa-solid fa-mobile-screen-button", keywords: ["iphone", "android", "cell", "device", "call", "smartphone"] },
+            { name: "Tablet", class: "fa-solid fa-tablet-screen-button", keywords: ["ipad", "device", "kindle", "mobile", "screen"] },
+            { name: "Wifi", class: "fa-solid fa-wifi", keywords: ["internet", "network", "connection", "wireless", "hotspot"] },
+
+            // Code & Development
+            { name: "Code", class: "fa-solid fa-code", keywords: ["html", "css", "javascript", "programming", "develop", "brackets", "script"] },
+            { name: "Code Branch", class: "fa-solid fa-code-branch", keywords: ["git", "version control", "fork", "merge", "develop"] },
+            { name: "Terminal", class: "fa-solid fa-terminal", keywords: ["command line", "console", "prompt", "develop", "code", "shell"] },
+            { name: "Bug", class: "fa-solid fa-bug", keywords: ["error", "issue", "insect", "problem", "fix", "debug", "report"] },
+
+            // Miscellaneous
+            { name: "Sun", class: "fa-regular fa-sun", keywords: ["light mode", "day", "weather", "bright", "morning", "light"] },
+            { name: "Moon", class: "fa-regular fa-moon", keywords: ["dark mode", "night", "sleep", "crescent", "dark"] },
+            { name: "Cloud", class: "fa-solid fa-cloud", keywords: ["weather", "sky", "storage", "upload", "download", "data"] },
+            { name: "Globe", class: "fa-solid fa-globe", keywords: ["world", "earth", "international", "language", "map", "planet", "global"] },
+            { name: "Fire", class: "fa-solid fa-fire", keywords: ["hot", "flame", "burn", "popular", "trending", "heat"] },
+            { name: "Spinner", class: "fa-solid fa-spinner", keywords: ["loading", "progress", "wait", "working", "refresh", "circle", "rotate"] },
+
+            // Brand Icons (Sample with keywords)
+            { name: "GitHub", class: "fa-brands fa-github", keywords: ["code", "repository", "git", "develop", "version control", "programming"] },
+            { name: "Twitter", class: "fa-brands fa-twitter", keywords: ["social media", "tweet", "x", "news", "updates", "feed"] },
+            { name: "XTwitter", class: "fa-brands fa-x-twitter", keywords: ["social media", "tweet", "twitter", "news", "updates", "feed", "x"] },
+            { name: "Facebook", class: "fa-brands fa-facebook", keywords: ["social media", "connect", "friends", "like", "share", "meta"] },
+            { name: "LinkedIn", class: "fa-brands fa-linkedin", keywords: ["social media", "professional network", "job", "career", "business", "resume"] },
+            { name: "Instagram", class: "fa-brands fa-instagram", keywords: ["social media", "photo", "picture", "story", "reels", "camera"] },
+            { name: "YouTube", class: "fa-brands fa-youtube", keywords: ["video", "play", "stream", "watch", "channel", "subscribe"] },
+            { name: "Apple", class: "fa-brands fa-apple", keywords: ["ios", "mac", "iphone", "device", "fruit"] },
+            { name: "Android", class: "fa-brands fa-android", keywords: ["mobile", "os", "google", "device", "robot"] },
+            { name: "Windows", class: "fa-brands fa-windows", keywords: ["microsoft", "os", "pc", "desktop", "bill gates"] },
+            { name: "Google", class: "fa-brands fa-google", keywords: ["search", "android", "chrome", "services", "alphabet"] },
+            { name: "Amazon", class: "fa-brands fa-amazon", keywords: ["ecommerce", "shop", "aws", "kindle", "alexa", "buy"] },
+            { name: "Paypal", class: "fa-brands fa-paypal", keywords: ["payment", "money", "checkout", "transaction", "online payment"] },
+            { name: "Js (JavaScript)", class: "fa-brands fa-js", keywords: ["programming", "web development", "scripting", "frontend", "node"] },
+            { name: "Html5", class: "fa-brands fa-html5", keywords: ["web development", "markup", "structure", "frontend", "page"] },
+            { name: "Css3", class: "fa-brands fa-css3-alt", keywords: ["web development", "styling", "design", "frontend", "stylesheet"] },
+            { name: "React", class: "fa-brands fa-react", keywords: ["javascript library", "frontend", "ui", "web development", "facebook"] },
+            { name: "Node JS", class: "fa-brands fa-node-js", keywords: ["javascript runtime", "backend", "server", "web development", "v8"] },
+            { name: "Docker", class: "fa-brands fa-docker", keywords: ["containerization", "devops", "deploy", "virtualization", "whale"] },
+            { name: "Wordpress", class: "fa-brands fa-wordpress", keywords: ["cms", "blog", "website", "php", "content management"] },
+            { name: "Slack", class: "fa-brands fa-slack", keywords: ["communication", "team chat", "messaging", "collaboration", "work"] },
+            { name: "Discord", class: "fa-brands fa-discord", keywords: ["communication", "gaming", "chat", "voice", "community", "server"] },
+            { name: "Stack Overflow", class: "fa-brands fa-stack-overflow", keywords: ["programming help", "q&a", "code", "develop", "community"] },
+
+            // Add more icons with their keywords here following the pattern
+            // { name: "Icon Name", class: "fa-style fa-icon-name", keywords: ["tag1", "tag2", "synonym"] },
+            // Example of adding more from the previous larger list
+            { name: "Angle Down", class: "fa-solid fa-angle-down", keywords: ["arrow", "expand", "dropdown", "show more", "navigation"] },
+            { name: "Angle Left", class: "fa-solid fa-angle-left", keywords: ["arrow", "back", "previous", "collapse", "navigation"] },
+            { name: "Angle Right", class: "fa-solid fa-angle-right", keywords: ["arrow", "forward", "next", "expand", "navigation"] },
+            { name: "Angle Up", class: "fa-solid fa-angle-up", keywords: ["arrow", "collapse", "scroll top", "show less", "navigation"] },
+            { name: "Archive (Box Archive)", class: "fa-solid fa-box-archive", keywords: ["storage", "files", "backup", "old", "history"] },
+            { name: "Award", class: "fa-solid fa-award", keywords: ["achievement", "trophy", "prize", "recognition", "medal", "winner"] },
+            { name: "Birthday Cake", class: "fa-solid fa-cake-candles", keywords: ["celebration", "party", "dessert", "food", "event", "candles"] },
+            { name: "Bullhorn", class: "fa-solid fa-bullhorn", keywords: ["announcement", "shout", "loud", "broadcast", "megaphone", "alert"] },
+            { name: "Bullseye", class: "fa-solid fa-bullseye", keywords: ["target", "goal", "aim", "focus", "darts", "center"] },
+            { name: "Calculator", class: "fa-solid fa-calculator", keywords: ["math", "numbers", "count", "arithmetic", "finance", "education"] },
+            { name: "City", class: "fa-solid fa-city", keywords: ["urban", "buildings", "metropolis", "skyline", "town", "architecture"] },
+            { name: "Clipboard", class: "fa-regular fa-clipboard", keywords: ["copy", "paste", "notes", "document", "list", "tasks"] },
+            { name: "Coffee", class: "fa-solid fa-mug-saucer", keywords: ["drink", "beverage", "cafe", "morning", "break", "tea", "cup"] },
+            { name: "Credit Card (Solid)", class: "fa-solid fa-credit-card", keywords: ["payment", "purchase", "money", "buy", "checkout", "finance", "visa", "mastercard", "solid"] }, // Ensure distinct name if regular exists
+            { name: "File Contract", class: "fa-solid fa-file-contract", keywords: ["document", "agreement", "legal", "signature", "deal", "business"] },
+            { name: "File Invoice Dollar", class: "fa-solid fa-file-invoice-dollar", keywords: ["bill", "payment", "receipt", "money", "finance", "document", "charge"] },
+            { name: "Gem", class: "fa-regular fa-gem", keywords: ["diamond", "jewel", "valuable", "pro", "premium", "shiny", "treasure"] },
+            { name: "Landmark", class: "fa-solid fa-landmark", keywords: ["building", "monument", "history", "tourism", "government", "architecture"] },
+            { name: "Paper Plane", class: "fa-regular fa-paper-plane", keywords: ["send", "fly", "message", "email", "origami", "submit"] },
+            { name: "Sitemap", class: "fa-solid fa-sitemap", keywords: ["organization", "structure", "hierarchy", "flowchart", "navigation", "diagram"] },
+            { name: "Suitcase", class: "fa-solid fa-suitcase", keywords: ["travel", "luggage", "trip", "baggage", "vacation", "journey"] },
+            { name: "Table", class: "fa-solid fa-table", keywords: ["data", "grid", "spreadsheet", "rows", "columns", "chart"] },
+            { name: "Wallet", class: "fa-solid fa-wallet", keywords: ["money", "cash", "finance", "payment", "currency", "purse", "buy"] },
+            { name: "Computer Mouse", class: "fa-solid fa-computer-mouse", keywords: ["click", "pointer", "pc", "device", "scroll", "input"] },
+            { name: "Hard Drive", class: "fa-regular fa-hard-drive", keywords: ["storage", "data", "disk", "memory", "computer", "hdd", "ssd"] },
+            { name: "Headphones", class: "fa-solid fa-headphones", keywords: ["music", "audio", "sound", "listen", "earbuds", "device"] },
+            { name: "Keyboard", class: "fa-regular fa-keyboard", keywords: ["type", "input", "computer", "keys", "text", "write"] },
+            { name: "Mobile Screen", class: "fa-solid fa-mobile-screen", keywords: ["phone", "cell", "device", "app", "display", "android", "ios"] },
+            { name: "Satellite Dish", class: "fa-solid fa-satellite-dish", keywords: ["communication", "signal", "broadcast", "antenna", "space", "network"] },
+            { name: "Sim Card", class: "fa-solid fa-sim-card", keywords: ["phone", "mobile", "network", "chip", "communication", "data"] },
+            { name: "Tv", class: "fa-solid fa-tv", keywords: ["television", "screen", "monitor", "display", "media", "watch", "broadcast"] },
+            { name: "Bold", class: "fa-solid fa-bold", keywords: ["text editor", "format", "strong", "typography", "style"] },
+            { name: "Italic", class: "fa-solid fa-italic", keywords: ["text editor", "format", "emphasis", "typography", "style", "oblique"] },
+            { name: "Underline", class: "fa-solid fa-underline", keywords: ["text editor", "format", "link", "typography", "style", "highlight"] },
+            { name: "UserSolid", class: "fa-solid fa-user", keywords: ["profile", "avatar", "human", "person", "account", "member", "login", "individual", "solid"] }, // distinct from regular if needed
+            { name: "UserAstronaut", class: "fa-solid fa-user-astronaut", keywords: ["space", "nasa", "profile", "avatar", "explore", "galaxy", "human"] },
+            { name: "UserGraduate", class: "fa-solid fa-user-graduate", keywords: ["student", "education", "learn", "degree", "school", "profile", "avatar", "cap"] },
+            { name: "UserNinja", class: "fa-solid fa-user-ninja", keywords: ["stealth", "hidden", "secret", "profile", "avatar", "assassin", "martial arts"] },
+            { name: "UserSecret", class: "fa-solid fa-user-secret", keywords: ["spy", "incognito", "anonymous", "hidden", "private", "profile", "avatar", "detective"] },
+            { name: "Child", class: "fa-solid fa-child", keywords: ["kid", "toddler", "baby", "youth", "young", "person", "human"] },
+        ];
+
+
+        function displayIcons(iconsToDisplay) {
+            iconGrid.innerHTML = ''; // Clear existing icons
+            if (iconsToDisplay.length === 0 && searchInput.value.trim() !== '') {
+                noResultsMessage.style.display = 'block';
+                iconGrid.style.display = 'none';
+            } else {
+                noResultsMessage.style.display = 'none';
+                iconGrid.style.display = 'grid';
+            }
+
+            iconsToDisplay.forEach(icon => {
+                const item = document.createElement('div');
+                item.classList.add('icon-item');
+                item.dataset.iconClass = icon.class;
+                item.title = `${icon.name} (${icon.class}) Keywords: ${icon.keywords ? icon.keywords.join(', ') : 'N/A'}`;
+
+                const preview = document.createElement('i');
+                preview.className = `icon-preview ${icon.class}`;
+
+                const name = document.createElement('span');
+                name.classList.add('icon-name');
+                name.textContent = icon.name;
+
+                item.appendChild(preview);
+                item.appendChild(name);
+
+                item.addEventListener('click', () => handleIconClick(item, icon));
+                iconGrid.appendChild(item);
+            });
+            iconCountDisplay.textContent = `Showing ${iconsToDisplay.length} of ${faIcons.length} loaded icons.`;
+        }
+
+        function handleIconClick(itemElement, iconData) {
+            if (selectedIconItem) {
+                selectedIconItem.classList.remove('selected');
+            }
+            itemElement.classList.add('selected');
+            selectedIconItem = itemElement;
+
+            const iconHtml = `<i class="${iconData.class}"></i>`;
+            codeToCopyPre.textContent = iconHtml;
+            copyArea.style.display = 'block';
+            copyButton.textContent = 'Copy Code';
+            copyButton.disabled = false;
+
+            copyArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const filteredIcons = faIcons.filter(icon => {
+                const nameMatch = icon.name.toLowerCase().includes(searchTerm);
+                const classMatch = icon.class.toLowerCase().includes(searchTerm);
+                const keywordsMatch = icon.keywords && icon.keywords.some(keyword => keyword.toLowerCase().includes(searchTerm));
+                return nameMatch || classMatch || keywordsMatch;
+            });
+            displayIcons(filteredIcons);
+
+            if (selectedIconItem && !filteredIcons.some(icon => icon.class === selectedIconItem.dataset.iconClass)) {
+                selectedIconItem.classList.remove('selected');
+                selectedIconItem = null;
+                copyArea.style.display = 'none';
+            }
+        });
+
+        copyButton.addEventListener('click', async () => {
+            if (codeToCopyPre.textContent) {
+                try {
+                    await navigator.clipboard.writeText(codeToCopyPre.textContent);
+                    copyButton.textContent = 'Copied!';
+                    copyButton.disabled = true;
+                    setTimeout(() => {
+                        copyButton.textContent = 'Copy Code';
+                        copyButton.disabled = false;
+                    }, 1500);
+                } catch (err) {
+                    console.error('Failed to copy: ', err);
+                    copyButton.textContent = 'Copy Failed';
+                    setTimeout(() => {
+                        copyButton.textContent = 'Copy Code';
+                    }, 2000);
+                    alert('Could not copy text automatically. Please select and copy manually from the text area.');
+                }
+            }
+        });
+
+        // Initial display of all icons (sorted)
+        displayIcons(faIcons.sort((a, b) => a.name.localeCompare(b.name)));
+    </script>
+
+</body>
+</html>
