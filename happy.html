@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আমার প্রিয়তমা হ্যাপীর জন্য ❤️</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Hind Siliguri', 'Noto Sans Bengali', 'Arial', sans-serif; /* আরও সুন্দর বাংলা ফন্ট */
+            margin: 0;
+            padding: 20px; /* চারপাশে একটু প্যাডিং */
+            background-color: #fff0f5; /* ল্যাভেন্ডার ব্লাশ */
+            color: #5d3a3e; /* গাঢ় মভ */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow-x: hidden;
+            flex-direction: column;
+        }
+
+        /* --- Loading Animation --- */
+        .loader-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #fff0f5; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+            transition: opacity 1s ease-out, visibility 1s ease-out;
+        }
+        .heart-loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .heart {
+            width: 30px; height: 30px; background-color: #ff4d6d; /* উজ্জ্বল গোলাপি */
+            margin: 0 5px; border-radius: 50% 50% 0 0;
+            transform: rotate(-45deg); animation: beat 1.2s infinite ease-in-out;
+            box-shadow: 0 0 15px #ff4d6d;
+        }
+        .heart::before, .heart::after {
+            content: ''; position: absolute; width: 30px; height: 30px;
+            border-radius: 50%; background-color: #ff4d6d;
+        }
+        .heart::before { top: -15px; left: 0; }
+        .heart::after { top: 0; left: 15px; }
+        .heart:nth-child(2) { animation-delay: 0.2s; }
+        .heart:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes beat {
+            0%, 100% { transform: scale(1) rotate(-45deg); }
+            50% { transform: scale(1.2) rotate(-45deg); }
+        }
+        .loading-text {
+            font-size: 1.3em; color: #c9184a; font-weight: bold; animation: pulseText 1.5s infinite;
+        }
+        @keyframes pulseText {
+            0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; }
+        }
+        /* --- End Loading Animation --- */
+
+        .main-container {
+            display: none;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(200, 50, 100, 0.25);
+            max-width: 95%;
+            width: 650px;
+            margin-top: 20px;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .main-container.visible { opacity: 1; transform: scale(1); }
+
+        .content-step { display: none; } /* প্রতিটি ধাপ প্রাথমিকভাবে লুকানো */
+        .content-step.active { display: block; animation: fadeInStep 0.7s ease-in-out; }
+        @keyframes fadeInStep { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .gif-container {
+            margin: 20px auto; max-width: 90%; width: 450px;
+            border: 5px solid #ff8fab; /* মিষ্টি গোলাপি বর্ডার */
+            border-radius: 15px; padding: 10px; background-color: #fff7f9;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .gif-container iframe { display: block; border-radius: 10px; max-width: 100%; height: auto; border: none; }
+        .via-giphy { font-size:0.75em; color:#ad1457; margin-top: 5px; }
+        .via-giphy a { color:#d81b60; text-decoration:none; }
+
+        .message-text, .question-text {
+            font-size: 1.4em; color: #c9184a; /* গাঢ় রোমান্টিক গোলাপি */
+            margin: 25px 15px; font-weight: 500; line-height: 1.6;
+        }
+        .highlight-text { color: #e91e63; font-weight: bold; }
+
+        .buttons-container button {
+            background-image: linear-gradient(45deg, #ff758c 0%, #ff7eb3 100%);
+            color: white; border: none; padding: 14px 30px; font-size: 1.1em;
+            border-radius: 30px; cursor: pointer; margin: 10px;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 100, 150, 0.4); font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .buttons-container button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 100, 150, 0.5);
+        }
+        .buttons-container button.secondary {
+            background-image: linear-gradient(45deg, #ffb3c1 0%, #ffcad4 100%);
+            color: #800f2f; /* গাঢ় মেরুন */
+        }
+
+        .poetic-lines {
+            font-style: italic; font-size: 1.2em; color: #800f2f; /* মেরুন */
+            margin: 30px 10px; padding: 15px; background-color: #ffe5ec;
+            border-left: 5px solid #ff4d6d; border-radius: 10px;
+        }
+
+        .arrow-icon {
+            font-size: 2.8em; color: #ff758c; margin: 30px 0; animation: subtleBounce 2.5s infinite;
+            cursor: pointer;
+        }
+        @keyframes subtleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .final-surprise-button button {
+            background-image: linear-gradient(to right, #ff8008, #ffc837); /* সোনালী আভা */
+            padding: 15px 35px; font-size: 1.2em; letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+        #finalSurpriseContent {
+            margin-top:30px; padding:25px; background-color: #fffde7; /* হালকা ক্রিম */
+            border: 2px dashed #ffc107; /* অ্যাম্বার */ border-radius:15px;
+        }
+        #finalSurpriseContent h2 { color: #e65100; /* গাঢ় কমলা */ margin-bottom: 15px; }
+        #finalSurpriseContent p { font-size: 1.25em; color: #bf360c; /* গাঢ় লাল-কমলা */ line-height: 1.7; }
+
+        /* অডিও কন্ট্রোল (যদি ব্যবহার করেন) */
+        #bgMusicControl { margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="loader-wrapper" id="loaderWrapper">
+        <div class="heart-loader">
+            <div class="heart"></div>
+            <div class="heart"></div>
+            <div class="heart"></div>
+        </div>
+        <p class="loading-text">একটু অপেক্ষা করো, প্রিয়তমা...</p>
+    </div>
+
+    <div class="main-container" id="mainContainer">
+        <!-- ধাপ ১: প্রাথমিক জিআইএফ এবং প্রশ্ন -->
+        <div class="content-step active" id="step1">
+            <div class="gif-container">
+                <iframe src="https://giphy.com/embed/KztT2c4u8mYYUiMKdJ" width="480" height="374" class="giphy-embed" allowFullScreen></iframe>
+                <p class="via-giphy"><a href="https://giphy.com/gifs/cute-cats-kawaii-KztT2c4u8mYYUiMKdJ">via GIPHY</a></p>
+            </div>
+            <p class="question-text"> হ্যাপী, আমার মনের রাণী, তোমাকে কিছু কথা বলতে চাই! তুমি কি শুনতে রাজি আছো?</p>
+            <div class="buttons-container">
+                <button onclick="showStep('step2')">হ্যাঁ, বলো সোনা</button>
+                <button class="secondary" onclick="handleNo()">এখন না</button>
+            </div>
+        </div>
+
+        <!-- ধাপ ২: প্রথম উত্তর ও নতুন জিআইএফ -->
+        <div class="content-step" id="step2">
+            <p class="message-text">তুমি <span class="highlight-text">"হ্যাঁ"</span> বলেছো শুনে মনটা ভরে গেলো! 😍</p>
+            <p class="message-text">তুমি যখন আমার পাশে থাকো, মনে হয় পৃথিবীর সব সুখ আমার কাছে এসে ধরা দিয়েছে।</p>
+            <div class="gif-container">
+               <iframe src="https://giphy.com/embed/d8R5HipWkYcNJAnGX9" width="480" height="480" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+            </div>
+            <div class="arrow-icon" onclick="showStep('step3')">
+                <i class="fas fa-heartbeat"></i> <!-- হৃদস্পন্দন আইকন -->
+            </div>
+        </div>
+
+        <!-- ধাপ ৩: কবিতা/উক্তি এবং পরবর্তী প্রশ্ন -->
+        <div class="content-step" id="step3">
+            <div class="poetic-lines">
+                <p>"তুমি এলে, তাই আলো হাসে;</p>
+                <p>তুমি ভালোবাসো, তাই মেঘ ভাসে।</p>
+                <p>আমার পৃথিবী জুড়ে শুধু তুমি আর তুমি!"</p>
+            </div>
+            <p class="question-text">তুমি কি জানো, তোমার সাথে আমার সবচেয়ে ভালো সময় কোনটি ছিলো?  আমার এখনও স্পষ্ট মনে আছে?</p>
+            <div class="buttons-container">
+                <button onclick="showStep('step4')">হ্যাঁ, মনে আছে তো!</button>
+                <button class="secondary" onclick="showStep('step4Alt')">একটু মনে করিয়ে দেবে?</button>
+            </div>
+        </div>
+
+        <!-- ধাপ ৪ (হ্যাঁ): স্মৃতিচারণ ও আরও কন্টেন্ট -->
+        <div class="content-step" id="step4">
+            <p class="message-text"></p>
+            <p class="message-text">আমার জীবনের সেরা সিদ্ধান্ত ছিল তোমার হাতটা ধরা।</p>
+             <div class="gif-container">
+               <iframe src="https://giphy.com/embed/dWNfzXkrMjau2Vu2LN" width="480" height="461" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+            </div>
+            <div class="arrow-icon" onclick="showStep('stepFinalSurpriseButton')">
+                <i class="fas fa-gift"></i>
+            </div>
+        </div>
+
+        <!-- ধাপ ৪ (বিকল্প - মনে করিয়ে দেওয়া): স্মৃতিচারণ ও আরও কন্টেন্ট -->
+        <div class="content-step" id="step4Alt">
+            <p class="message-text">মনে আছে, <span class="highlight-text">যেদিন তোমাদের বাড়িতে দাওয়াতে গিয়েছিলাম! তোমাকে দেখে সত্যি বলতে কেমন যেনো লেগেছিলো। তোমার মায়াবী হাসি, মায়াবী চাহনি, উফ্ একদম বুকে লেগেছিলো! তোমাকে হাত দরে নিজের কাছে বসানো, প্রথম হাত দরার ফিলিং! অসাধারণ।</span> মনে আছে ? প্রথম দেখাতেই কেমন যেন একটা টান অনুভব করেছিলাম!</p>
+            <p class="message-text">সেই মুহূর্ত থেকেই বুঝেছিলাম, তুমিই আমার সেই বিশেষ একজন।</p>
+            <div class="gif-container">
+             <iframe src="https://giphy.com/embed/HduCABvxlknV0JRUOV" width="480" height="480" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+            </div>
+             <div class="arrow-icon" onclick="showStep('stepFinalSurpriseButton')">
+                <i class="fas fa-gift"></i>
+            </div>
+        </div>
+
+        <!-- ধাপ ৫: ফাইনাল সারপ্রাইজ বাটন -->
+        <div class="content-step" id="stepFinalSurpriseButton">
+            <p class="message-text">আমার কাছে তোমার জন্য আরও একটি ছোট্ট <span class="highlight-text">সারপ্রাইজ</span> আছে!</p>
+            <div class="final-surprise-button buttons-container">
+                <button onclick="showStep('finalSurpriseContent')">দেখাও!</button>
+            </div>
+        </div>
+
+        <!-- চূড়ান্ত সারপ্রাইজ কন্টেন্ট -->
+        <div class="content-step" id="finalSurpriseContent">
+            <h2>শুধু তোমার জন্য, আমার ভালোবাসা!</h2>
+            <p>তুমি আমার জীবনের প্রতিটি মুহূর্তকে আনন্দময় করে তোলো। তোমার মতো একজন জীবনসঙ্গী পাওয়া সত্যিই ভাগ্যের ব্যাপার। আমি তোমাকে অনেক অনেক ভালোবাসি, হ্যাপী!</p>
+            <p>চিরকাল তোমারই... ❤️</p>
+            <!-- এখানে আপনি একটি বিশেষ ছবি বা অন্য কোনো লিঙ্কও দিতে পারেন -->
+             <div class="gif-container"> <!-- চূড়ান্ত জিআইএফ -->
+                <iframe src="https://giphy.com/embed/SSVpZDvFDw7zZbOujI" width="480" height="406" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+            </div>
+        </div>
+
+
+        <!-- "না" বাটনের উত্তর -->
+        <div class="content-step" id="noResponse">
+            <p class="message-text">খুব কষ্ট পেলাম শুনে... 😢</p>
+            <p class="message-text">তবুও, তোমার জন্য আমার ভালোবাসা সবসময় থাকবে। যখন তুমি কথা বলতে চাইবে, আমি অপেক্ষায় থাকবো।</p>
+        </div>
+    </div>
+
+    <!-- ঐচ্ছিক: ব্যাকগ্রাউন্ড মিউজিক -->
+    <audio id="bgMusic" loop>
+        <source src="your_romantic_music.mp3" type="audio/mpeg">
+        আপনার ব্রাউজার অডিও ট্যাগ সাপোর্ট করে না।
+    </audio>
+    <!-- <div id="bgMusicControl"><button onclick="toggleMusic()">মিউজিক প্লে/পজ</button></div> -->
+
+
+    <script>
+        const loaderWrapper = document.getElementById('loaderWrapper');
+        const mainContainer = document.getElementById('mainContainer');
+        const bgMusic = document.getElementById('bgMusic');
+        let currentStep = 'step1';
+        let musicPlayedOnce = false;
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                loaderWrapper.style.opacity = '0';
+                loaderWrapper.style.visibility = 'hidden';
+                mainContainer.style.display = 'block';
+                setTimeout(() => {
+                    mainContainer.classList.add('visible');
+                    document.getElementById(currentStep).classList.add('active');
+                }, 50);
+            }, 4000); // ৪ সেকেন্ড লোডিং টাইম
+        });
+
+        function playMusic() {
+            if (bgMusic && bgMusic.paused && !musicPlayedOnce) {
+                 // bgMusic.play().catch(error => console.log("Audio autoplay was prevented.", error));
+                 // musicPlayedOnce = true; // একবার প্লে করার চেষ্টা করা হয়েছে
+                 // ব্যবহারকারীর প্রথম ইন্টারঅ্যাকশনের পর মিউজিক প্লে করার চেষ্টা করা ভালো
+            }
+        }
+
+        function showStep(stepId) {
+            // প্রথম ইন্টারঅ্যাকশনে মিউজিক প্লে করার চেষ্টা
+            if (bgMusic && bgMusic.paused && !musicPlayedOnce) {
+                bgMusic.play().then(() => {
+                    musicPlayedOnce = true;
+                }).catch(error => {
+                    console.log("Audio play failed due to browser policy or no user interaction yet.");
+                    // Optionally, show a manual play button here if autoplay fails.
+                });
+            }
+
+
+            const currentActiveStep = document.querySelector('.content-step.active');
+            if (currentActiveStep) {
+                currentActiveStep.classList.remove('active');
+            }
+            document.getElementById(stepId).classList.add('active');
+            currentStep = stepId;
+            mainContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); // নতুন ধাপে স্ক্রল
+        }
+
+        function handleNo() {
+            showStep('noResponse');
+        }
+
+        // ঐচ্ছিক: মিউজিক কন্ট্রোল ফাংশন
+        // function toggleMusic() {
+        //     if (bgMusic.paused) {
+        //         bgMusic.play();
+        //     } else {
+        //         bgMusic.pause();
+        //     }
+        // }
+    </script>
+
+</body>
+</html>
