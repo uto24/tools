@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Database Web App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f9fc;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .logo {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo h1 {
+            font-size: 2.2rem;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo i {
+            margin-right: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        form {
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 0;
+        }
+        
+        input, textarea, select, button {
+            padding: 12px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button.danger {
+            background-color: var(--accent-color);
+        }
+        
+        button.danger:hover {
+            background-color: #c0392b;
+        }
+        
+        button.success {
+            background-color: var(--success-color);
+        }
+        
+        button.success:hover {
+            background-color: #27ae60;
+        }
+        
+        button.warning {
+            background-color: var(--warning-color);
+        }
+        
+        button.warning:hover {
+            background-color: #e67e22;
+        }
+        
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .search-container i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+        
+        #search {
+            padding-left: 40px;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .export-buttons button {
+            flex: 1 1 200px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .action-buttons button {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(-20px);
+            transition: var(--transition);
+        }
+        
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: var(--dark-color);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+            padding: 5px;
+        }
+        
+        .contact-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .detail-group {
+            margin-bottom: 15px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .detail-value {
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            word-break: break-word;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .no-contacts {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        @media (max-width: 768px) {
+            .contact-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-buttons button {
+                width: 100%;
+            }
+            
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-content, .print-content * {
+                visibility: visible;
+            }
+            .print-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .contact-details {
+                display: block;
+            }
+            .detail-group {
+                margin-bottom: 10px;
+                page-break-inside: avoid;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        tr {
+            animation: fadeIn 0.3s ease forwards;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--dark-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Toggle switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-right: 10px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <div class="container">
+            <h1><i class="fa-solid fa-address-book"></i> Phone Number Database</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <form id="contactForm">
+                <div class="form-group">
+                    <input type="text" id="name" placeholder="Name (required)" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="phone" placeholder="Phone (required)" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="company" placeholder="Company">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="job" placeholder="Job Title">
+                </div>
+                <div class="form-group">
+                    <input type="url" id="website" placeholder="Website">
+                </div>
+                <div class="form-group">
+                    <input type="date" id="birthday" placeholder="Birthday">
+                </div>
+                <div class="form-group">
+                    <select id="category">
+                        <option value="">Select Category</option>
+                        <option value="Family">Family</option>
+                        <option value="Friends">Friends</option>
+                        <option value="Work">Work</option>
+                        <option value="Business">Business</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="address" placeholder="Address">
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <textarea id="notes" placeholder="Notes"></textarea>
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <button type="submit" class="success"><i class="fas fa-plus-circle"></i> Add Contact</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search" placeholder="Search contacts...">
+            </div>
+
+            <div class="export-buttons">
+                <button id="exportJson" class="warning"><i class="fas fa-file-export"></i> Export to JSON</button>
+                <button id="exportCsv" class="warning"><i class="fas fa-file-csv"></i> Export to CSV</button>
+                <button id="importJson" class="warning"><i class="fas fa-file-import"></i> Import from JSON</button>
+                <input type="file" id="fileInput" accept=".json" class="hidden">
+                <button id="printAll" class="warning"><i class="fas fa-print"></i> Print All</button>
+            </div>
+
+            <table id="contactsTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th class="no-print">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Contacts will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            
+            <div id="noContactsMessage" class="no-contacts hidden">
+                <i class="fas fa-address-book" style="font-size: 3rem; color: #bdc3c7; margin-bottom: 15px;"></i>
+                <h3>No contacts found</h3>
+                <p>Add your first contact using the form above</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Detail Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Contact Details</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="contact-details" id="modalContactDetails">
+                <!-- Contact details will be inserted here by JavaScript -->
+            </div>
+            <div class="modal-footer no-print" style="margin-top: 20px; text-align: right;">
+                <button id="printSingle" class="warning"><i class="fas fa-print"></i> Print</button>
+                <button class="close-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Template (hidden) -->
+    <div id="printTemplate" class="hidden">
+        <div class="print-content">
+            <h1 style="text-align: center; margin-bottom: 30px;">Contact Details</h1>
+            <div class="contact-details">
+                <!-- Contact details will be inserted here for printing -->
+            </div>
+            <div style="text-align: center; margin-top: 40px; font-size: 0.9rem; color: #7f8c8d;">
+                Printed from Phone Number Database on <span id="printDate"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // IIFE for AppCore
+        const AppCore = (() => {
+            const init = () => {
+                Data.loadContacts();
+                UI.renderContacts(Data.getContacts());
+                
+                // Event listeners
+                document.getElementById('contactForm').addEventListener('submit', UI.handleFormSubmit);
+                document.getElementById('search').addEventListener('input', UI.searchContacts);
+                document.getElementById('exportJson').addEventListener('click', UI.exportToJson);
+                document.getElementById('exportCsv').addEventListener('click', UI.exportToCsv);
+                document.getElementById('importJson').addEventListener('click', () => document.getElementById('fileInput').click());
+                document.getElementById('fileInput').addEventListener('change', UI.importFromJson);
+                document.getElementById('printAll').addEventListener('click', UI.printAllContacts);
+                document.getElementById('printSingle').addEventListener('click', UI.printCurrentContact);
+                
+                // Modal close buttons
+                document.querySelectorAll('.close-modal').forEach(btn => {
+                    btn.addEventListener('click', UI.closeModal);
+                });
+                
+                // Close modal when clicking outside
+                document.getElementById('contactModal').addEventListener('click', (e) => {
+                    if (e.target === document.getElementById('contactModal')) {
+                        UI.closeModal();
+                    }
+                });
+                
+                // Show welcome message
+                setTimeout(() => {
+                    UI.showToast('Welcome to Phone Number Database!');
+                }, 1000);
+            };
+            
+            return { init };
+        })();
+
+        // IIFE for Data
+        const Data = (() => {
+            let contacts = [];
+            let currentContactId = null;
+
+            const loadContacts = () => {
+                try {
+                    const storedContacts = localStorage.getItem('contacts');
+                    contacts = storedContacts ? JSON.parse(storedContacts) : [];
+                } catch (error) {
+                    console.error('Error loading contacts:', error);
+                    UI.showToast('Error loading contacts', 'error');
+                }
+            };
+
+            const saveContacts = () => {
+                try {
+                    localStorage.setItem('contacts', JSON.stringify(contacts));
+                } catch (error) {
+                    console.error('Error saving contacts:', error);
+                    UI.showToast('Error saving contacts', 'error');
+                }
+            };
+
+            const getContacts = () => contacts;
+
+            const addContact = (contact) => {
+                contacts.push(contact);
+                saveContacts();
+                UI.showToast('Contact added successfully');
+            };
+
+            const updateContact = (id, updatedContact) => {
+                contacts = contacts.map(contact => contact.id === id ? updatedContact : contact);
+                saveContacts();
+                UI.showToast('Contact updated successfully');
+            };
+
+            const deleteContact = (id) => {
+                contacts = contacts.filter(contact => contact.id !== id);
+                saveContacts();
+                UI.showToast('Contact deleted');
+            };
+
+            const getContactById = (id) => contacts.find(contact => contact.id === id);
+
+            const setCurrentContact = (id) => {
+                currentContactId = id;
+            };
+
+            const getCurrentContact = () => getContactById(currentContactId);
+
+            return { 
+                loadContacts, 
+                getContacts, 
+                addContact, 
+                updateContact, 
+                deleteContact, 
+                getContactById,
+                setCurrentContact,
+                getCurrentContact
+            };
+        })();
+
+        // IIFE for UI
+        const UI = (() => {
+            let isEditing = false;
+            let currentEditId = null;
+
+            const renderContacts = (contacts) => {
+                const tbody = document.querySelector('#contactsTable tbody');
+                const noContactsMsg = document.getElementById('noContactsMessage');
+                
+                tbody.innerHTML = '';
+                
+                if (contacts.length === 0) {
+                    noContactsMsg.classList.remove('hidden');
+                    return;
+                }
+                
+                noContactsMsg.classList.add('hidden');
+                
+                contacts.forEach(contact => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${escapeHtml(contact.name)}</td>
+                        <td>${formatPhoneNumber(escapeHtml(contact.phone))}</td>
+                        <td>${escapeHtml(contact.email) || '—'}</td>
+                        <td class="no-print">
+                            <div class="action-buttons">
+                                <button onclick="UI.editContact('${contact.id}')" class="warning"><i class="fas fa-edit"></i></button>
+                                <button onclick="UI.viewContact('${contact.id}')"><i class="fas fa-eye"></i></button>
+                                <button onclick="UI.printContact('${contact.id}')"><i class="fas fa-print"></i></button>
+                                <button onclick="UI.deleteContact('${contact.id}')" class="danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            };
+
+            const handleFormSubmit = (event) => {
+                event.preventDefault();
+                
+                const contact = {
+                    id: isEditing ? currentEditId : generateId(),
+                    name: document.getElementById('name').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    company: document.getElementById('company').value.trim(),
+                    job: document.getElementById('job').value.trim(),
+                    website: document.getElementById('website').value.trim(),
+                    birthday: document.getElementById('birthday').value,
+                    category: document.getElementById('category').value,
+                    address: document.getElementById('address').value.trim(),
+                    notes: document.getElementById('notes').value.trim(),
+                    timestamp: new Date().toISOString()
+                };
+                
+                if (!contact.name || !contact.phone) {
+                    showToast('Name and Phone are required fields', 'error');
+                    return;
+                }
+                
+                if (isEditing) {
+                    Data.updateContact(currentEditId, contact);
+                    isEditing = false;
+                    currentEditId = null;
+                } else {
+                    Data.addContact(contact);
+                }
+                
+                renderContacts(Data.getContacts());
+                document.getElementById('contactForm').reset();
+                document.getElementById('contactForm').querySelector('button').innerHTML = '<i class="fas fa-plus-circle"></i> Add Contact';
+            };
+
+            const searchContacts = (event) => {
+                const query = event.target.value.toLowerCase();
+                const filteredContacts = Data.getContacts().filter(contact => 
+                    Object.values(contact).some(value => 
+                        String(value).toLowerCase().includes(query)
+                    )
+                );
+                renderContacts(filteredContacts);
+            };
+
+            const deleteContact = (id) => {
+                if (confirm('Are you sure you want to delete this contact?')) {
+                    Data.deleteContact(id);
+                    renderContacts(Data.getContacts());
+                }
+            };
+
+            const editContact = (id) => {
+                const contact = Data.getContactById(id);
+                if (contact) {
+                    document.getElementById('name').value = contact.name;
+                    document.getElementById('phone').value = contact.phone;
+                    document.getElementById('email').value = contact.email;
+                    document.getElementById('company').value = contact.company;
+                    document.getElementById('job').value = contact.job;
+                    document.getElementById('website').value = contact.website;
+                    document.getElementById('birthday').value = contact.birthday;
+                    document.getElementById('category').value = contact.category;
+                    document.getElementById('address').value = contact.address;
+                    document.getElementById('notes').value = contact.notes;
+                    
+                    isEditing = true;
+                    currentEditId = id;
+                    
+                    const submitBtn = document.getElementById('contactForm').querySelector('button');
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Contact';
+                    submitBtn.scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+
+            const viewContact = (id) => {
+                const contact = Data.getContactById(id);
+                if (contact) {
+                    Data.setCurrentContact(id);
+                    const modalDetails = document.getElementById('modalContactDetails');
+                    modalDetails.innerHTML = generateContactDetailsHTML(contact);
+                    document.getElementById('contactModal').classList.add('active');
+                }
+            };
+
+            const printContact = (id) => {
+                const contact = Data.getContactById(id);
+                if (contact) {
+                    Data.setCurrentContact(id);
+                    printCurrentContact();
+                }
+            };
+
+            const closeModal = () => {
+                document.getElementById('contactModal').classList.remove('active');
+            };
+
+            const exportToJson = () => {
+                const json = JSON.stringify(Data.getContacts(), null, 2);
+                downloadFile(json, 'contacts.json', 'application/json');
+                showToast('Contacts exported to JSON');
+            };
+
+            const exportToCsv = () => {
+                const contacts = Data.getContacts();
+                if (contacts.length === 0) {
+                    showToast('No contacts to export', 'error');
+                    return;
+                }
+                
+                const headers = ['Name', 'Phone', 'Email', 'Company', 'Job', 'Website', 'Birthday', 'Category', 'Address', 'Notes', 'Timestamp'];
+                const csvRows = [];
+                
+                // Add header row
+                csvRows.push(headers.join(','));
+                
+                // Add data rows
+                contacts.forEach(contact => {
+                    const values = headers.map(header => {
+                        const key = header.toLowerCase();
+                        return JSON.stringify(contact[key] || '');
+                    });
+                    csvRows.push(values.join(','));
+                });
+                
+                const csvString = csvRows.join('\n');
+                downloadFile(csvString, 'contacts.csv', 'text/csv');
+                showToast('Contacts exported to CSV');
+            };
+
+            const importFromJson = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedContacts = JSON.parse(e.target.result);
+                        if (!Array.isArray(importedContacts)) {
+                            throw new Error('Invalid format: Expected an array of contacts');
+                        }
+                        
+                        if (importedContacts.length === 0) {
+                            showToast('File contains no contacts', 'warning');
+                            return;
+                        }
+                        
+                        if (confirm(`Import ${importedContacts.length} contacts? This will replace your current contacts.`)) {
+                            Data.loadContacts(); // Reload current contacts
+                            Data.contacts = importedContacts; // Replace with imported contacts
+                            Data.saveContacts();
+                            renderContacts(Data.getContacts());
+                            showToast(`${importedContacts.length} contacts imported successfully`);
+                        }
+                    } catch (error) {
+                        console.error('Error importing contacts:', error);
+                        showToast('Error importing contacts: ' + error.message, 'error');
+                    }
+                };
+                reader.onerror = () => {
+                    showToast('Error reading file', 'error');
+                };
+                reader.readAsText(file);
+                
+                // Reset file input
+                event.target.value = '';
+            };
+
+            const printAllContacts = () => {
+                const contacts = Data.getContacts();
+                if (contacts.length === 0) {
+                    showToast('No contacts to print', 'warning');
+                    return;
+                }
+                
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>All Contacts</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { text-align: center; margin-bottom: 30px; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                            th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+                            th { background-color: #f2f2f2; }
+                            .footer { text-align: center; margin-top: 30px; font-size: 0.9em; color: #777; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>All Contacts (${contacts.length})</h1>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Company</th>
+                                    <th>Job</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${contacts.map(contact => `
+                                    <tr>
+                                        <td>${escapeHtml(contact.name)}</td>
+                                        <td>${escapeHtml(contact.phone)}</td>
+                                        <td>${escapeHtml(contact.email || '—')}</td>
+                                        <td>${escapeHtml(contact.company || '—')}</td>
+                                        <td>${escapeHtml(contact.job || '—')}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        <div class="footer">
+                            Printed from Phone Number Database on ${new Date().toLocaleString()}
+                        </div>
+                    </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+            };
+
+            const printCurrentContact = () => {
+                const contact = Data.getCurrentContact();
+                if (!contact) return;
+                
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Contact: ${escapeHtml(contact.name)}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            h1 { text-align: center; margin-bottom: 30px; color: #2c3e50; }
+                            .contact-card { 
+                                max-width: 600px; 
+                                margin: 0 auto; 
+                                border: 1px solid #ddd; 
+                                padding: 30px; 
+                                border-radius: 8px;
+                                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                            }
+                            .detail-row { 
+                                display: flex; 
+                                margin-bottom: 15px; 
+                                border-bottom: 1px solid #eee; 
+                                padding-bottom: 15px;
+                            }
+                            .detail-label { 
+                                font-weight: bold; 
+                                width: 120px; 
+                                color: #3498db;
+                            }
+                            .detail-value { flex: 1; }
+                            .footer { 
+                                text-align: center; 
+                                margin-top: 30px; 
+                                font-size: 0.9em; 
+                                color: #777;
+                            }
+                            @page { size: auto; margin: 10mm; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="contact-card">
+                            <h1>${escapeHtml(contact.name)}</h1>
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">Phone:</div>
+                                <div class="detail-value">${escapeHtml(contact.phone)}</div>
+                            </div>
+                            
+                            ${contact.email ? `
+                            <div class="detail-row">
+                                <div class="detail-label">Email:</div>
+                                <div class="detail-value">${escapeHtml(contact.email)}</div>
+                            </div>
+                            ` : ''}
+                            
+                            ${contact.company ? `
+                            <div class="detail-row">
+                                <div class="detail-label">Company:</div>
+                                <div class="detail-value">${escapeHtml(contact.company)}</div>
+                            </div>
+                            ` : ''}
+                            
+                            ${contact.job ? `
+                            <div class="detail-row">
+                                <div class="detail-label">Job Title:</div>
+                                <div class="detail-value">${escapeHtml(contact.job)}</div>
+                            </div>
+                            ` : ''}
+                            
+                            ${contact.website ? `
+                            <div class="detail-row">
+                                <div class="detail-label">Website:</div>
+                                <div class="detail-value">${escapeHtml(contact.website)}</div>
+                            </div>
+                            ` : ''}
+                            
+                            ${contact.birthday ? `
+                            <div class="detail-row">
+                                <div class="detail-label">Birthday:</div>
+                                <div class="detail-value">${formatDate(contact.birthday)}</div>
+                            </div>
+                            ` : ''}
+                            
+                            ${contact.category ? `
+                            <div class="detail-row">
+                                <div class="detail-label">Category:</div>
+                                <div class="detail-value">${escapeHtml(contact.category)}</div>
+                            </div>
+                            ` : ''}
+                            
+                            ${contact.address ? `
+                            <div class="detail-row">
+                                <div class="detail-label">Address:</div>
+                                <div class="detail-value">${escapeHtml(contact.address)}</div>
+                            </div>
+                            ` : ''}
+                            
+                            ${contact.notes ? `
+                            <div class="detail-row">
+                                <div class="detail-label">Notes:</div>
+                                <div class="detail-value">${escapeHtml(contact.notes)}</div>
+                            </div>
+                            ` : ''}
+                            
+                            <div class="footer">
+                                Printed from Phone Number Database on ${new Date().toLocaleString()}
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+            };
+
+            const showToast = (message, type = 'success') => {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = 'toast';
+                
+                // Add type class
+                if (type === 'error') {
+                    toast.style.backgroundColor = '#e74c3c';
+                } else if (type === 'warning') {
+                    toast.style.backgroundColor = '#f39c12';
+                } else {
+                    toast.style.backgroundColor = '#2ecc71';
+                }
+                
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            };
+
+            // Helper functions
+            const generateContactDetailsHTML = (contact) => {
+                return `
+                    <div class="detail-group">
+                        <span class="detail-label">Name</span>
+                        <div class="detail-value">${escapeHtml(contact.name)}</div>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <span class="detail-label">Phone</span>
+                        <div class="detail-value">${formatPhoneNumber(escapeHtml(contact.phone))}</div>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <span class="detail-label">Email</span>
+                        <div class="detail-value">${contact.email ? escapeHtml(contact.email) : '—'}</div>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <span class="detail-label">Company</span>
+                        <div class="detail-value">${contact.company ? escapeHtml(contact.company) : '—'}</div>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <span class="detail-label">Job Title</span>
+                        <div class="detail-value">${contact.job ? escapeHtml(contact.job) : '—'}</div>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <span class="detail-label">Website</span>
+                        <div class="detail-value">${contact.website ? `<a href="${escapeHtml(contact.website)}" target="_blank">${escapeHtml(contact.website)}</a>` : '—'}</div>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <span class="detail-label">Birthday</span>
+                        <div class="detail-value">${contact.birthday ? formatDate(contact.birthday) : '—'}</div>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <span class="detail-label">Category</span>
+                        <div class="detail-value">${contact.category ? escapeHtml(contact.category) : '—'}</div>
+                    </div>
+                    
+                    <div class="detail-group full-width">
+                        <span class="detail-label">Address</span>
+                        <div class="detail-value">${contact.address ? escapeHtml(contact.address) : '—'}</div>
+                    </div>
+                    
+                    <div class="detail-group full-width">
+                        <span class="detail-label">Notes</span>
+                        <div class="detail-value">${contact.notes ? escapeHtml(contact.notes) : '—'}</div>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <span class="detail-label">Last Updated</span>
+                        <div class="detail-value">${formatDateTime(contact.timestamp)}</div>
+                    </div>
+                `;
+            };
+
+            return { 
+                renderContacts, 
+                handleFormSubmit, 
+                searchContacts, 
+                deleteContact, 
+                editContact, 
+                viewContact, 
+                printContact,
+                closeModal,
+                exportToJson, 
+                exportToCsv, 
+                importFromJson,
+                printAllContacts,
+                printCurrentContact,
+                showToast
+            };
+        })();
+
+        // Utility functions
+        const escapeHtml = (unsafe) => {
+            if (!unsafe) return '';
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        };
+
+        const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
+
+        const downloadFile = (content, fileName, contentType) => {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
+        const formatPhoneNumber = (phone) => {
+            if (!phone) return '';
+            // Simple formatting - you can enhance this with a proper phone number formatting library
+            return phone.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+        };
+
+        const formatDate = (dateString) => {
+            if (!dateString) return '';
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        };
+
+        const formatDateTime = (dateTimeString) => {
+            if (!dateTimeString) return '';
+            return new Date(dateTimeString).toLocaleString();
+        };
+
+        // Initialize the app
+        AppCore.init();
+    </script>
+</body>
+</html>
