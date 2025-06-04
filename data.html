@@ -12,16 +12,32 @@
         @import url('https://fonts.maateen.me/kalpurush/font.css'); /* Bengali Font */
 
         :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #f5f7fa;
+            --primary-color: #4a90e2; /* Main blue */
+            --primary-color-darker: #3a7bc8; /* Darker shade of primary for hovers */
+            --secondary-color-start: #f8f9fa; /* Light grey for body bg start */
+            --secondary-color-end: #eef2f7;   /* Slightly darker grey for body bg end */
             --text-color: #333;
+            --text-color-light: #555;
             --border-color: #d1d5db;
             --danger-color: #e53e3e;
+            --danger-color-darker: #c53030;
             --success-color: #48bb78;
+            --success-color-darker: #38a169;
             --edit-color: #f6ad55; /* Orange for edit */
+            --edit-color-darker: #dd6b20;
             --warning-color: #f6ad55; /* Using same as edit for clear/show all */
+            --warning-color-darker: #dd6b20;
             --search-color: #38b2ac; /* Teal for search */
-            --print-color: #6b46c1; /* Purple for print */ /* New */
+            --search-color-darker: #2c7a7b;
+            --print-color: #6b46c1; /* Purple for print */
+            --print-color-darker: #553c9a;
+            --disabled-color: #a0aec0;
+            --disabled-color-darker: #718096;
+            --white-color: #fff;
+            --input-bg: #fdfdff; /* Slightly off-white for inputs */
+            --input-focus-bg: #fff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --shadow-color-light: rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -31,22 +47,23 @@
         }
 
         body {
-            font-family: 'Kalpurush', Arial, sans-serif; /* Using Kalpurush Bengali font */
+            font-family: Arial, sans-serif;
             line-height: 1.6;
-            background-color: var(--secondary-color);
+            background: linear-gradient(to bottom, var(--secondary-color-start), var(--secondary-color-end)); /* Subtle gradient background */
             color: var(--text-color);
             padding: 20px;
+            min-height: 100vh;
         }
 
         .container {
             max-width: 1400px;
             margin: 20px auto;
-            background-color: #fff;
+            background-color: var(--white-color);
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px; /* Slightly more rounded */
+            box-shadow: 0 6px 18px var(--shadow-color); /* Enhanced shadow */
             transition: all 0.3s ease-in-out;
-            overflow: hidden; /* Prevents box shadow clipping */
+            overflow: hidden;
         }
 
         h1, h2 {
@@ -65,10 +82,10 @@
         section {
             margin-bottom: 30px;
             padding: 25px;
-            background-color: #ffffff;
+            background-color: var(--white-color);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 8px; /* More rounded sections */
+            box-shadow: 0 3px 6px var(--shadow-color-light);
             animation: fadeIn 0.5s ease-in-out;
         }
 
@@ -91,23 +108,28 @@
             transition: transform 0.2s ease;
         }
          .form-group:focus-within {
-             transform: scale(1.02); /* Slight zoom on focusing element within */
+             transform: translateY(-2px) scale(1.01); /* Enhanced focus effect */
+         }
+         .form-group:focus-within label {
+             color: var(--primary-color); /* Change label color on focus */
+             font-weight: bold;
          }
 
 
         .form-group label {
             margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
+            font-weight: 500; /* Slightly lighter bold */
+            color: var(--text-color-light);
             display: flex;
             align-items: center;
             font-size: 0.95rem;
+            transition: color 0.3s ease;
         }
 
         .form-group label i {
             margin-right: 8px;
             color: var(--primary-color);
-            width: 18px; /* Fixed width for icons */
+            width: 18px;
             text-align: center;
             font-size: 1.1em;
         }
@@ -117,24 +139,24 @@
         .form-group input[type="email"],
         .form-group input[type="tel"],
         .form-group input[type="url"],
-        .form-group input[type="password"],
+        /* .form-group input[type="password"], REMOVED as password is now type="text" */
         .form-group select {
             width: 100%;
             padding: 12px;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 6px; /* More rounded inputs */
             font-size: 1rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
             font-family: 'Kalpurush', Arial, sans-serif;
-            background-color: #f8f9fa; /* Light background for inputs */
+            background-color: var(--input-bg);
         }
 
         .form-group input:focus,
         .form-group select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.25); /* Slightly stronger focus ring */
             outline: none;
-            background-color: #fff;
+            background-color: var(--input-focus-bg);
         }
 
          /* Input validation styles */
@@ -149,7 +171,7 @@
 
         .form-actions {
             display: flex;
-            flex-wrap: wrap; /* Allows buttons to wrap on smaller screens */
+            flex-wrap: wrap;
             justify-content: center;
             gap: 15px;
             margin-top: 25px;
@@ -160,163 +182,179 @@
             font-size: 1rem;
             font-weight: bold;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px; /* Consistent rounding */
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             font-family: 'Kalpurush', Arial, sans-serif;
-            text-align: center; /* Ensure text is centered */
-            justify-content: center; /* Ensure icon and text are centered */
+            text-align: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px var(--shadow-color-light);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+        button:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 4px var(--shadow-color-light);
         }
 
+
         button i {
-            font-size: 1.1em; /* Slightly larger icons */
+            font-size: 1.1em;
         }
 
         #submit-button {
             background-color: var(--success-color);
-            color: white;
+            color: var(--white-color);
         }
         #submit-button:hover {
-            background-color: #38a169; /* Darker shade */
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: var(--success-color-darker);
         }
 
         #clear-button {
             background-color: var(--warning-color);
-            color: white;
+            color: var(--white-color);
         }
         #clear-button:hover {
-            background-color: #dd6b20; /* Darker shade */
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: var(--warning-color-darker);
         }
 
         /* Search Section Styles */
         .search-controls {
             display: flex;
-            flex-wrap: wrap; /* Allow wrapping on small screens */
+            flex-wrap: wrap;
             gap: 15px;
-            align-items: center; /* Vertically align items */
-            justify-content: center; /* Center items */
+            align-items: center;
+            justify-content: center;
         }
 
         #search-field, #search-term {
             padding: 12px;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 1rem;
             font-family: 'Kalpurush', Arial, sans-serif;
-            flex-grow: 1; /* Allow input to grow */
-            min-width: 150px; /* Minimum width */
+            flex-grow: 1;
+            min-width: 150px;
+            background-color: var(--input-bg);
         }
+         #search-field:focus, #search-term:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.25);
+            outline: none;
+            background-color: var(--input-focus-bg);
+         }
         #search-field {
-            flex-grow: 0; /* Don't let select grow too much */
+            flex-grow: 0;
             min-width: 120px;
         }
 
         #search-button {
             background-color: var(--search-color);
-            color: white;
+            color: var(--white-color);
         }
         #search-button:hover {
-            background-color: #2c7a7b; /* Darker shade */
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: var(--search-color-darker);
         }
 
         #show-all-button {
-            background-color: #a0aec0; /* Gray */
-            color: white;
+            background-color: var(--disabled-color);
+            color: var(--white-color);
         }
         #show-all-button:hover {
-             background-color: #718096; /* Darker Gray */
-             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+             background-color: var(--disabled-color-darker);
         }
 
-        /* New Print Button Style */
         #print-button {
             background-color: var(--print-color);
-            color: white;
+            color: var(--white-color);
         }
         #print-button:hover {
-            background-color: #553c9a; /* Darker Purple */
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: var(--print-color-darker);
         }
 
 
         /* Output Table Styles */
         .table-container {
             width: 100%;
-            overflow-x: auto; /* Enable horizontal scrolling for the table */
+            overflow-x: auto;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px; /* More rounded */
             margin-top: 20px;
+            box-shadow: 0 2px 4px var(--shadow-color-light);
         }
 
         #data-table {
             width: 100%;
-            border-collapse: collapse; /* Removes space between borders */
-            min-width: 1200px; /* Ensure table has minimum width for scrolling */
+            border-collapse: collapse;
+            min-width: 1200px;
         }
 
         #data-table th, #data-table td {
             border: 1px solid var(--border-color);
             padding: 12px 15px;
             text-align: left;
-            vertical-align: middle; /* Align cell content vertically */
+            vertical-align: middle;
             font-size: 0.95rem;
-            white-space: nowrap; /* Prevent text wrapping initially */
+            white-space: nowrap;
         }
         #data-table td:nth-child(3), /* Address */
         #data-table td:nth-child(9), /* Education */
         #data-table td:nth-child(10),/* FB Link */
         #data-table td:nth-child(11) /* Data Access */
         {
-            white-space: normal; /* Allow wrapping for longer text fields */
-            min-width: 150px; /* Give more space to potentially long fields */
+            white-space: normal;
+            min-width: 150px;
         }
 
 
         #data-table thead {
             background-color: var(--primary-color);
-            color: white;
+            color: var(--white-color);
             font-weight: bold;
-            position: sticky; /* Make header sticky */
-            top: 0; /* Stick to the top of the container */
-            z-index: 10; /* Ensure header is above table body */
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
+        #data-table thead th {
+            border-bottom-width: 2px; /* Stronger bottom border for header cells */
+            border-bottom-color: var(--primary-color-darker);
+        }
+
 
         #data-table th i {
             margin-right: 8px;
         }
 
         #data-table tbody tr {
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s ease, transform 0.1s ease;
             animation: rowFadeIn 0.4s ease-out;
         }
 
         #data-table tbody tr:nth-child(even) {
-            background-color: #f9fafb; /* Slightly different bg for even rows */
+            background-color: var(--secondary-color-start);
         }
 
         #data-table tbody tr:hover {
-            background-color: #e2e8f0; /* Highlight on hover */
+            background-color: #e2e8f0;
+            transform: scale(1.005); /* Subtle scale on row hover */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Shadow on hover for emphasis */
+            z-index: 5; /* Ensure hovered row is above others */
+            position: relative; /* Needed for z-index on tr */
         }
 
         @keyframes rowFadeIn {
-          from { opacity: 0; transform: scale(0.95); }
+          from { opacity: 0; transform: scale(0.98); }
           to { opacity: 1; transform: scale(1); }
         }
 
 
         #data-table .action-buttons button {
-            padding: 6px 10px; /* Smaller buttons for actions */
+            padding: 6px 10px;
             font-size: 0.9rem;
             margin-right: 5px;
             border-radius: 4px;
@@ -327,42 +365,40 @@
 
         .edit-button {
             background-color: var(--edit-color);
-            color: white;
+            color: var(--white-color);
         }
         .edit-button:hover {
-            background-color: #dd6b20;
+            background-color: var(--edit-color-darker);
         }
 
         .delete-button {
             background-color: var(--danger-color);
-            color: white;
+            color: var(--white-color);
         }
         .delete-button:hover {
-            background-color: #c53030;
+            background-color: var(--danger-color-darker);
         }
 
         /* --- Print Styles --- */
         @media print {
             body {
-                padding: 0; /* Remove body padding */
-                background-color: #fff; /* White background for printing */
-                color: #000; /* Black text for printing */
+                padding: 0;
+                background: var(--white-color) !important;
+                color: #000 !important;
+                background-image: none !important; /* Remove gradient for print */
             }
 
-            /* Hide everything by default */
             body * {
                 visibility: hidden !important;
             }
 
-            /* Make only the container and its children visible */
             .container, .container * {
                 visibility: visible !important;
-                box-shadow: none !important; /* Remove shadows in print */
-                border: none !important; /* Remove borders in print */
-                background-color: #fff !important; /* Ensure white background */
+                box-shadow: none !important;
+                border: none !important;
+                background-color: var(--white-color) !important;
             }
 
-            /* Specific elements to explicitly show within the container */
             #output-section, #output-section *,
             .table-container, .table-container *,
             #data-table, #data-table *,
@@ -372,85 +408,93 @@
 
 
             .container {
-                 /* Position the container at the top left of the printable area */
                  position: absolute;
                  left: 0;
                  top: 0;
-                 width: 100%; /* Use full width */
+                 width: 100%;
                  margin: 0;
-                 padding: 15mm; /* Add some padding/margins for printing */
+                 padding: 15mm;
             }
 
             h1, h2, #input-section, #search-section, .form-actions, .search-controls {
-                display: none !important; /* Hide input form, search area, buttons */
+                display: none !important;
             }
 
             .table-container {
-                overflow-x: visible !important; /* Disable horizontal scrolling */
-                border: 1px solid #ccc !important; /* Add a border back for the table */
+                overflow-x: visible !important;
+                border: 1px solid #ccc !important;
                 border-radius: 0 !important;
+                box-shadow: none !important;
             }
 
             #data-table {
-                min-width: auto !important; /* Allow table to shrink/fit */
-                width: 100% !important; /* Ensure it takes available width */
+                min-width: auto !important;
+                width: 100% !important;
                 border-collapse: collapse !important;
             }
+             #data-table tbody tr:hover {
+                 transform: none !important; /* Remove hover effects for print */
+                 box-shadow: none !important;
+                 z-index: auto !important;
+                 position: static !important;
+             }
+
 
             #data-table th, #data-table td {
-                border: 1px solid #ccc !important; /* Lighter border for print */
-                padding: 8px 10px !important; /* Adjust padding */
-                white-space: normal !important; /* Allow text wrapping */
-                font-size: 0.85rem !important; /* Slightly smaller font maybe */
+                border: 1px solid #ccc !important;
+                padding: 8px 10px !important;
+                white-space: normal !important;
+                font-size: 0.85rem !important;
             }
 
-             /* Specific columns that might still be wide, but wrapping is enabled */
-             #data-table td:nth-child(3), /* Address */
-             #data-table td:nth-child(9), /* Education */
-             #data-table td:nth-child(10),/* FB Link */
-             #data-table td:nth-child(11) /* Data Access */
+             #data-table td:nth-child(3),
+             #data-table td:nth-child(9),
+             #data-table td:nth-child(10),
+             #data-table td:nth-child(11)
              {
-                  min-width: auto !important; /* Remove min-width constraint for print */
-                  width: auto !important; /* Let content define width */
+                  min-width: auto !important;
+                  width: auto !important;
              }
 
 
             #data-table thead {
-                background-color: #e0e0e0 !important; /* Lighter header background */
-                color: #333 !important; /* Darker text for header */
+                background-color: #e0e0e0 !important;
+                color: #333 !important;
                 font-weight: bold !important;
-                position: static !important; /* Disable sticky header in print */
+                position: static !important;
             }
+             #data-table thead th {
+                 border-bottom-color: #ccc !important;
+             }
+
 
             #data-table tbody tr:nth-child(even) {
-                background-color: #f0f0f0 !important; /* Adjust even row background */
+                background-color: #f0f0f0 !important;
             }
 
             #data-table tbody tr:hover {
-                 background-color: #f0f0f0 !important; /* Remove hover effect */
+                 background-color: inherit !important; /* No hover for even rows */
+            }
+            #data-table tbody tr:nth-child(odd):hover {
+                background-color: var(--white-color) !important; /* No hover for odd rows */
             }
 
 
-            /* Hide action buttons column in print */
              #data-table th:last-child,
              #data-table td:last-child {
                  display: none !important;
              }
-             /* Hide 'No data' row if it was visible on screen but table has data to print (unlikely but safe) */
              #no-data-row {
                  display: none !important;
              }
-             /* Ensure links are underlined and show href */
              a {
                  text-decoration: underline !important;
                  color: #000 !important;
              }
              a[href]:after {
-                 content: " (" attr(href) ")"; /* Optionally show the URL */
+                 content: " (" attr(href) ")";
                  font-size: 0.8em;
              }
-
-
         }
 
 
@@ -458,33 +502,32 @@
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
+                margin: 10px;
             }
             h1 { font-size: 1.8rem; }
             h2 { font-size: 1.5rem; }
 
             #data-form .form-grid {
-                grid-template-columns: 1fr; /* Stack form fields */
+                grid-template-columns: 1fr;
                 gap: 15px;
             }
 
             .form-actions, .search-controls {
                 flex-direction: column;
-                align-items: stretch; /* Make buttons full width */
+                align-items: stretch;
             }
             button {
-                 width: 100%; /* Make buttons full width on small screens */
-                 justify-content: center; /* Center icon/text */
+                 width: 100%;
+                 justify-content: center;
             }
              #search-field, #search-term {
-                 width: 100%; /* Full width for search inputs */
+                 width: 100%;
              }
-
-            /* Table responsiveness is handled by horizontal scrolling via .table-container */
         }
 
         @media (max-width: 480px) {
             body { padding: 10px; }
-            .container { padding: 15px; }
+            .container { padding: 15px; margin: 5px;}
              h1 { font-size: 1.5rem; }
              h2 { font-size: 1.3rem; }
              button { padding: 10px 15px; }
@@ -511,7 +554,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="name"><i class="fas fa-user"></i> নাম:</label>
-                        <input type="text" id="name" required placeholder="যেমনঃ রহিম করিম">
+                        <input type="text" id="name" required placeholder="..">
                     </div>
                     <div class="form-group">
                         <label for="age"><i class="fas fa-birthday-cake"></i> বয়স:</label>
@@ -558,13 +601,16 @@
                     </div>
                     <div class="form-group">
                         <label for="password"><i class="fas fa-lock"></i> পাসওয়ার্ড:</label>
-                        <input type="password" id="password" required placeholder="একটি শক্তিশালী পাসওয়ার্ড দিন">
+                        <!-- MODIFIED: Changed type to "text" to make password visible during input -->
+                        <input type="text" id="password" required placeholder="একটি শক্তিশালী পাসওয়ার্ড দিন">
                     </div>
                      <div class="form-group">
                         <label for="status"><i class="fas fa-info-circle"></i> স্ট্যাটাস:</label>
+                        <!-- MODIFIED: Added 'Rejected' option -->
                         <select id="status" required>
                             <option value="Submitted">Submitted</option>
                             <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
                             <option value="Funded">Funded</option>
                             <option value="Done">Done</option>
                         </select>
@@ -582,7 +628,7 @@
             <h2><i class="fas fa-search"></i> ডেটা অনুসন্ধান করুন</h2>
             <div class="search-controls">
                 <select id="search-field">
-                    <option value="all">সকল ফিল্ড</option> <!-- Added option to search all fields -->
+                    <option value="all">সকল ফিল্ড</option>
                     <option value="userId">ইউজার আইডি</option>
                     <option value="name">নাম</option>
                     <option value="age">বয়স</option>
@@ -595,12 +641,11 @@
                     <option value="fbLink">ফেসবুক লিংক</option>
                     <option value="dataAccess">ডেটা অ্যাক্সেস</option>
                     <option value="status">স্ট্যাটাস</option>
-                    <!-- Password search is generally discouraged -->
                 </select>
                 <input type="text" id="search-term" placeholder="এখানে লিখে অনুসন্ধান করুন...">
                 <button type="button" id="search-button"><i class="fas fa-search"></i> অনুসন্ধান</button>
                 <button type="button" id="show-all-button"><i class="fas fa-list"></i> সব ডেটা দেখান</button>
-                 <button type="button" id="print-button"><i class="fas fa-print"></i> ডেটা প্রিন্ট করুন</button> <!-- New Print Button -->
+                 <button type="button" id="print-button"><i class="fas fa-print"></i> ডেটা প্রিন্ট করুন</button>
             </div>
         </section>
 
@@ -628,7 +673,6 @@
                         </tr>
                     </thead>
                     <tbody id="data-body">
-                        <!-- Data rows will be inserted here by JavaScript -->
                         <tr id="no-data-row" style="display: none;">
                             <td colspan="14" style="text-align: center; font-style: italic;">কোন ডেটা পাওয়া যায়নি।</td>
                         </tr>
@@ -645,19 +689,18 @@
             const form = document.getElementById('data-form');
             const tableBody = document.getElementById('data-body');
             const submitButton = document.getElementById('submit-button');
-            const submitButtonText = document.getElementById('submit-button-text');
+            const submitButtonTextSpan = document.getElementById('submit-button-text'); // Corrected to get the span
             const clearButton = document.getElementById('clear-button');
             const searchField = document.getElementById('search-field');
             const searchTermInput = document.getElementById('search-term');
             const searchButton = document.getElementById('search-button');
             const showAllButton = document.getElementById('show-all-button');
-            const printButton = document.getElementById('print-button'); // Get the new print button
+            const printButton = document.getElementById('print-button');
             const noDataRow = document.getElementById('no-data-row');
-            const userIdInput = document.getElementById('userId'); // Hidden input for editing
+            const userIdInput = document.getElementById('userId');
 
             const LOCAL_STORAGE_KEY = 'localUserData';
 
-            // --- Utility Functions ---
             const generateUserId = () => `UID-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
 
             const getStoredData = () => {
@@ -669,19 +712,19 @@
                 localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
             };
 
-            // --- Form Handling ---
             const clearForm = () => {
                 form.reset();
-                userIdInput.value = ''; // Clear hidden ID
-                submitButtonText.textContent = 'ডেটা যোগ করুন'; // Reset button text
-                submitButton.innerHTML = `<i class="fas fa-plus-circle"></i> ${submitButtonText.textContent}`; // Reset icon
-                // Remove validation states visually if needed (optional)
-                 form.querySelectorAll('input, select').forEach(el => {
-                     el.classList.remove('is-valid', 'is-invalid'); // Example class names
-                     el.style.borderColor = ''; // Reset border color
-                     el.style.boxShadow = ''; // Reset box shadow
+                userIdInput.value = '';
+                submitButtonTextSpan.textContent = 'ডেটা যোগ করুন';
+                submitButton.querySelector('i').className = 'fas fa-save'; // Default icon for add
+                // If you used a specific add icon, use that, e.g., 'fas fa-plus-circle'
+                // submitButton.innerHTML = `<i class="fas fa-plus-circle"></i> <span id="submit-button-text">ডেটা যোগ করুন</span>`; // Rebuild if necessary or just change icon class
+
+                form.querySelectorAll('input, select').forEach(el => {
+                     el.style.borderColor = '';
+                     el.style.boxShadow = '';
                  });
-                 document.getElementById('name').focus(); // Focus on the first field
+                 document.getElementById('name').focus();
             };
 
             const populateFormForEdit = (userData) => {
@@ -693,39 +736,35 @@
                 document.getElementById('email').value = userData.email;
                 document.getElementById('paymentMethod').value = userData.paymentMethod;
                 document.getElementById('paymentNumber').value = userData.paymentNumber;
-                document.getElementById('education').value = userData.education || ''; // Handle potentially missing fields
+                document.getElementById('education').value = userData.education || '';
                 document.getElementById('fbLink').value = userData.fbLink || '';
                 document.getElementById('dataAccess').value = userData.dataAccess || '';
                 document.getElementById('password').value = userData.password;
                 document.getElementById('status').value = userData.status;
 
-                submitButtonText.textContent = 'ডেটা আপডেট করুন'; // Change button text
-                submitButton.innerHTML = `<i class="fas fa-save"></i> ${submitButtonText.textContent}`; // Change icon
+                submitButtonTextSpan.textContent = 'ডেটা আপডেট করুন';
+                submitButton.querySelector('i').className = 'fas fa-save'; // Icon for update
+                // submitButton.innerHTML = `<i class="fas fa-save"></i> <span id="submit-button-text">ডেটা আপডেট করুন</span>`; // Rebuild or just change icon class
 
-                // Scroll to form for better UX
+
                 document.getElementById('input-section').scrollIntoView({ behavior: 'smooth' });
-                document.getElementById('name').focus(); // Focus on the first field
-
-                // Optionally, add validation feedback classes if using them
-                // form.querySelectorAll('input, select').forEach(el => el.classList.add('is-valid'));
+                document.getElementById('name').focus();
             };
 
-            // --- Table Rendering ---
             const renderTable = (dataToRender) => {
-                tableBody.innerHTML = ''; // Clear existing rows
+                tableBody.innerHTML = '';
 
                 if (!dataToRender || dataToRender.length === 0) {
-                    noDataRow.style.display = 'table-row'; // Show 'no data' message
+                    noDataRow.style.display = 'table-row';
                     return;
                 }
 
-                noDataRow.style.display = 'none'; // Hide 'no data' message
+                noDataRow.style.display = 'none';
 
                 dataToRender.forEach(userData => {
                     const row = tableBody.insertRow();
-                    row.setAttribute('data-user-id', userData.userId); // Add data attribute for easy selection
+                    row.setAttribute('data-user-id', userData.userId);
 
-                    // Define the order of keys matching the table headers
                     const keysInOrder = [
                         'userId', 'name', 'age', 'address', 'number', 'email',
                         'paymentMethod', 'paymentNumber', 'education', 'fbLink',
@@ -734,18 +773,16 @@
 
                     keysInOrder.forEach(key => {
                         const cell = row.insertCell();
-                        let displayValue = userData[key] || '-'; // Display '-' for empty/null values
+                        let displayValue = userData[key] || '-';
 
                         if (key === 'fbLink' && userData[key]) {
-                            // Make FB link clickable
                             const link = document.createElement('a');
                             link.href = userData[key];
-                            link.textContent = 'Link'; // Or show the link itself
-                            link.target = '_blank'; // Open in new tab
+                            link.textContent = 'Link';
+                            link.target = '_blank';
                             cell.appendChild(link);
                         } else if (key === 'password') {
-                            // Display a masked password for security
-                             cell.textContent = '••••••••'; // Or use displayValue if you must show it
+                             cell.textContent = '••••••••'; // Mask password in table
                              cell.style.fontFamily = 'monospace';
                         }
                         else {
@@ -753,8 +790,6 @@
                         }
                     });
 
-
-                    // Action Buttons Cell
                     const actionCell = row.insertCell();
                     actionCell.classList.add('action-buttons');
 
@@ -762,7 +797,6 @@
                     editButton.innerHTML = '<i class="fas fa-edit"></i> এডিট';
                     editButton.classList.add('edit-button');
                     editButton.onclick = () => {
-                        // Find the full user data object from stored data using the ID
                         const allData = getStoredData();
                         const userToEdit = allData.find(item => item.userId === userData.userId);
                         if (userToEdit) {
@@ -776,7 +810,6 @@
                     deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> ডিলিট';
                     deleteButton.classList.add('delete-button');
                     deleteButton.onclick = () => {
-                         // Confirmation dialog
                         if (confirm(`আপনি কি "${userData.name}" (${userData.userId}) এর ডেটা মুছে ফেলতে চান?`)) {
                              deleteData(userData.userId);
                         }
@@ -787,14 +820,12 @@
                 });
             };
 
-            // --- Data Operations ---
             const addOrUpdateData = (event) => {
-                event.preventDefault(); // Prevent default form submission
+                event.preventDefault();
 
                 const editingUserId = userIdInput.value;
                 const allData = getStoredData();
 
-                // Get form values
                 const name = document.getElementById('name').value.trim();
                 const age = document.getElementById('age').value;
                 const address = document.getElementById('address').value.trim();
@@ -805,21 +836,17 @@
                 const education = document.getElementById('education').value.trim();
                 const fbLink = document.getElementById('fbLink').value.trim();
                 const dataAccess = document.getElementById('dataAccess').value.trim();
-                const password = document.getElementById('password').value; // No trim for password
+                const password = document.getElementById('password').value;
                 const status = document.getElementById('status').value;
 
-                 // Basic Validation Feedback (Optional but good)
-                 if (!name || !age || !address || !number || !email || !paymentMethod || !paymentNumber || !password) {
-                     alert('অনুগ্রহ করে প্রয়োজনীয় সকল ফিল্ড (*) পূরণ করুন।');
-                      // You might want to highlight the empty fields here
-                     return; // Stop submission if required fields are empty
+                 if (!name || !age || !address || !number || !email || !paymentMethod || !paymentNumber || !password || !status) {
+                     alert('অনুগ্রহ করে প্রয়োজনীয় সকল ফিল্ড পূরণ করুন।');
+                     return;
                  }
-                  // Validate number format (optional but good)
                   if (!/^[0-9]{11,14}$/.test(number)) {
                        alert('অনুগ্রহ করে একটি সঠিক ফোন নাম্বার দিন (১১ থেকে ১৪ সংখ্যা, শুধুমাত্র সংখ্যা)।');
                        return;
                   }
-                 // Validate email format (optional)
                   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                        alert('অনুগ্রহ করে একটি সঠিক ইমেইল অ্যাড্রেস দিন।');
                        return;
@@ -827,7 +854,7 @@
 
 
                 const userData = {
-                    userId: editingUserId || generateUserId(), // Use existing ID if editing, else generate new
+                    userId: editingUserId || generateUserId(),
                     name: name,
                     age: age,
                     address: address,
@@ -838,33 +865,31 @@
                     education: education,
                     fbLink: fbLink,
                     dataAccess: dataAccess,
-                    password: password,
+                    password: password, // Storing plain text password, consider hashing for real apps
                     status: status,
-                    lastUpdated: new Date().toISOString() // Add timestamp
+                    lastUpdated: new Date().toISOString()
                 };
 
 
                 if (editingUserId) {
-                    // Update existing record
                     const index = allData.findIndex(item => item.userId === editingUserId);
                     if (index !== -1) {
-                        allData[index] = userData; // Replace the old data with new data
+                        allData[index] = userData;
                         alert(`ইউজার আইডি ${editingUserId} সফলভাবে আপডেট করা হয়েছে।`);
                     } else {
                          console.error("Update failed: User ID not found.");
                          alert('আপডেট ব্যর্থ হয়েছে। ইউজার আইডি খুঁজে পাওয়া যায়নি।');
-                         clearForm(); // Clear form if update fails strangely
+                         clearForm();
                          return;
                     }
                 } else {
-                    // Add new record
                     allData.push(userData);
                     alert(`নতুন ডেটা (ইউজার আইডি: ${userData.userId}) সফলভাবে যোগ করা হয়েছে।`);
                 }
 
-                storeData(allData); // Save updated data array to localStorage
-                renderTable(allData); // Re-render the table
-                clearForm(); // Clear the form fields
+                storeData(allData);
+                renderTable(allData);
+                clearForm();
             };
 
             const deleteData = (userIdToDelete) => {
@@ -874,9 +899,8 @@
 
                 if (allData.length < initialLength) {
                     storeData(allData);
-                    renderTable(allData); // Re-render the table
+                    renderTable(allData);
                     alert(`ইউজার আইডি ${userIdToDelete} সফলভাবে মুছে ফেলা হয়েছে।`);
-                    // If the deleted item was being edited, clear the form
                     if(userIdInput.value === userIdToDelete) {
                         clearForm();
                     }
@@ -885,74 +909,66 @@
                 }
             };
 
-            // --- Search Functionality ---
             const performSearch = () => {
                 const field = searchField.value;
                 const term = searchTermInput.value.toLowerCase().trim();
                 const allData = getStoredData();
 
                 if (!term) {
-                    renderTable(allData); // If search term is empty, show all data
+                    renderTable(allData);
                     return;
                 }
 
                 const filteredData = allData.filter(item => {
                     if (field === 'all') {
-                        // Search across all relevant string fields
                         return Object.entries(item).some(([key, value]) => {
-                            // Exclude password from 'all' search for basic security/relevance
                             if (key !== 'password' && typeof value === 'string') {
                                 return value.toLowerCase().includes(term);
                             }
-                             // Also include age and userId search in 'all'
                              if ((key === 'age' || key === 'userId') && (value !== undefined && value !== null)) {
                                 return String(value).toLowerCase().includes(term);
                              }
                             return false;
                         });
                     } else {
-                        // Search in the specific selected field
                         const value = item[field];
                          if (typeof value === 'string') {
                              return value.toLowerCase().includes(term);
                          } else if (field === 'age' || field === 'userId') {
-                             // Handle specific number/ID fields
                              return String(value).toLowerCase().includes(term);
                          }
-                         return false; // Return false for undefined, null, or non-string/number values in other fields
+                         return false;
                     }
                 });
 
                 renderTable(filteredData);
             };
 
-            // --- Event Listeners ---
             form.addEventListener('submit', addOrUpdateData);
             clearButton.addEventListener('click', clearForm);
             searchButton.addEventListener('click', performSearch);
-            // Allow searching on pressing Enter in the search input
             searchTermInput.addEventListener('keyup', (event) => {
                 if (event.key === 'Enter') {
                     performSearch();
                 }
             });
             showAllButton.addEventListener('click', () => {
-                 searchTermInput.value = ''; // Clear search term
-                 searchField.value = 'all'; // Reset dropdown
-                 renderTable(getStoredData()); // Show all data
+                 searchTermInput.value = '';
+                 searchField.value = 'all';
+                 renderTable(getStoredData());
             });
 
-            // New Print Button Listener
             printButton.addEventListener('click', () => {
-                 window.print(); // Trigger the browser's print dialog
+                 window.print();
             });
 
-
-            // --- Initial Load ---
-            renderTable(getStoredData()); // Load and display data when the page loads
+            // Initial Load: Set default button state
+            submitButtonTextSpan.textContent = 'ডেটা যোগ করুন';
+            submitButton.querySelector('i').className = 'fas fa-save'; // Or 'fas fa-plus-circle' if you prefer for "add"
+            renderTable(getStoredData());
 
         });
-         // --- JavaScript End ---
     </script>
+    <!-- --- JavaScript End --- -->
 </body>
 </html>
