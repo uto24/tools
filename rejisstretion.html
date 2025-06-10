@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Data Extractor</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background-color: #ffffff;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a237e;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        /* Input Area */
+        .input-area label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        #inputData {
+            width: 100%;
+            height: 300px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        /* Output Area */
+        #output-container {
+            margin-top: 25px;
+            border-top: 2px solid #e0e0e0;
+            padding-top: 20px;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #3f51b5;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .output-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #e7e7e7;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .output-field:hover {
+            background-color: #f1f1f1;
+        }
+
+        .field-label {
+            font-weight: bold;
+            color: #444;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+
+        .field-value {
+            font-family: monospace;
+            background-color: #e9ecef;
+            padding: 5px 8px;
+            border-radius: 4px;
+            word-break: break-all; /* Ensures long text doesn't overflow */
+            flex-grow: 1;
+        }
+
+        .copy-btn {
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: #3f51b5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: background-color 0.2s, transform 0.1s;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background-color: #303f9f;
+        }
+        
+        .copy-btn:active {
+            transform: scale(0.97);
+        }
+
+        .copy-btn.copied {
+            background-color: #4caf50; /* Green color for success */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📝 তথ্য এক্সট্র্যাক্টর</h1>
+        <div class="input-area">
+            <label for="inputData">এখানে আপনার টেক্সট পেস্ট করুন:</label>
+            <textarea id="inputData" oninput="processData()">📝 নতুন রেজিস্ট্রেশন আবেদন!
+
+👤 আবেদনকারীর তথ্য:
+  🏷️ নাম: Hdd
+  📧 ইমেইল: dhdhd@gm.com
+  📱 মোবাইল: 01867192693
+  🏠 ঠিকানা: Vdbdbx
+  🎂 বয়স: 25 বছর
+  🎓 শিক্ষা: Bdbdb
+
+💳 পেমেন্ট বিবরণ:
+  ⚙️ মাধ্যম: bkash
+  #️⃣ নম্বর: 01792051444
+
+🔗 অন্যান্য:
+  👤 ফেসবুক: https://m.com
+  🔑 রেফারেল আইডি: Yeueyhd
+
+💻 সিস্টেমের তথ্য:
+User Agent: Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36
+Platform: Linux armv81
+Language: en-US
+Screen: 720x1151 (Pixel Ratio: 1.1125000715255737)
+Cookies Enabled: true
+Online: Yes
+Device Type (Est.): k
+Connection Type (Est.): 4g
+
+🔋 ব্যাটারির অবস্থা:
+Level: 5%
+Charging: হ্যাঁ
+
+🌐 ভিজিট তথ্য:
+পূর্ববর্তী পৃষ্ঠা: https://yrinspireit.github.io/login/
+বর্তমান সেশনের পৃষ্ঠা সংখ্যা: 4
+
+
+🗓️ জমা দেওয়ার তারিখ ও সময়: ১০/৬/২০২৫, ৯:১০:৪৭ PM</textarea>
+        </div>
+
+        <div id="output-container">
+             <!-- Processed data will appear here -->
+        </div>
+    </div>
+
+    <script>
+        // Function to extract a value from a line based on a keyword/prefix
+        function extractValue(lines, keyword) {
+            const line = lines.find(l => l.includes(keyword));
+            if (line) {
+                // Split by colon and take the second part, then trim whitespace
+                return line.split(':')[1].trim();
+            }
+            return 'N/A'; // Return Not Available if not found
+        }
+        
+        function processData() {
+            const inputText = document.getElementById('inputData').value;
+            const lines = inputText.split('\n').map(line => line.trim());
+            const outputContainer = document.getElementById('output-container');
+
+            // Define the fields we want to extract and display
+            const fields = [
+                { label: 'নাম', keyword: '🏷️ নাম:', id: 'name' },
+                { label: 'ইমেইল', keyword: '📧 ইমেইল:', id: 'email' },
+                { label: 'মোবাইল', keyword: '📱 মোবাইল:', id: 'mobile' },
+                { label: 'ঠিকানা', keyword: '🏠 ঠিকানা:', id: 'address' },
+                { label: 'বয়স', keyword: '🎂 বয়স:', id: 'age' },
+                { label: 'শিক্ষা', keyword: '🎓 শিক্ষা:', id: 'education' },
+                { label: 'পেমেন্ট মাধ্যম', keyword: '⚙️ মাধ্যম:', id: 'paymentMethod' },
+                { label: 'পেমেন্ট নম্বর', keyword: '#️⃣ নম্বর:', id: 'paymentNumber' },
+                { label: 'ফেসবুক আইডি', keyword: '👤 ফেসবুক:', id: 'fbId' }
+            ];
+
+            let outputHTML = '<h2>🔍 এক্সট্র্যাক্ট করা তথ্য</h2>';
+
+            fields.forEach(field => {
+                const value = extractValue(lines, field.keyword);
+                
+                outputHTML += `
+                    <div class="output-field">
+                        <span class="field-label">${field.label}:</span>
+                        <span class="field-value" id="value-${field.id}">${value}</span>
+                        <button class="copy-btn" data-target-id="value-${field.id}">কপি</button>
+                    </div>
+                `;
+            });
+            
+            outputContainer.innerHTML = outputHTML;
+        }
+
+        // Event delegation for copy buttons
+        document.getElementById('output-container').addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('copy-btn')) {
+                const button = event.target;
+                const targetId = button.getAttribute('data-target-id');
+                const textToCopy = document.getElementById(targetId).innerText;
+                
+                // Using modern Clipboard API
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    // Success feedback
+                    const originalText = button.innerText;
+                    button.innerText = 'কপি হয়েছে!';
+                    button.classList.add('copied');
+                    
+                    // Revert back after 2 seconds
+                    setTimeout(() => {
+                        button.innerText = originalText;
+                        button.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    // You can add error feedback here if needed
+                });
+            }
+        });
+
+        // Initial run on page load
+        window.onload = processData;
+    </script>
+
+</body>
+  </html>
