@@ -149,7 +149,7 @@
   #️⃣ নম্বর: 01792051444
 
 🔗 অন্যান্য:
-  👤 ফেসবুক: https://m.com
+  👤 ফেসবুক: https://facebook.com/example
   🔑 রেফারেল আইডি: Yeueyhd
 
 💻 সিস্টেমের তথ্য:
@@ -180,14 +180,20 @@ Charging: হ্যাঁ
     </div>
 
     <script>
+        // *** UPDATED FUNCTION ***
         // Function to extract a value from a line based on a keyword/prefix
         function extractValue(lines, keyword) {
             const line = lines.find(l => l.includes(keyword));
             if (line) {
-                // Split by colon and take the second part, then trim whitespace
-                return line.split(':')[1].trim();
+                // Find the index of the first colon
+                const colonIndex = line.indexOf(':');
+                if (colonIndex > -1) {
+                    // Get the substring from the character AFTER the colon to the end of the line
+                    // This correctly handles URLs like https://...
+                    return line.substring(colonIndex + 1).trim();
+                }
             }
-            return 'N/A'; // Return Not Available if not found
+            return 'N/A'; // Return Not Available if not found or no colon
         }
         
         function processData() {
@@ -232,21 +238,17 @@ Charging: হ্যাঁ
                 const targetId = button.getAttribute('data-target-id');
                 const textToCopy = document.getElementById(targetId).innerText;
                 
-                // Using modern Clipboard API
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    // Success feedback
                     const originalText = button.innerText;
                     button.innerText = 'কপি হয়েছে!';
                     button.classList.add('copied');
                     
-                    // Revert back after 2 seconds
                     setTimeout(() => {
                         button.innerText = originalText;
                         button.classList.remove('copied');
                     }, 2000);
                 }).catch(err => {
                     console.error('Failed to copy: ', err);
-                    // You can add error feedback here if needed
                 });
             }
         });
@@ -256,4 +258,4 @@ Charging: হ্যাঁ
     </script>
 
 </body>
-  </html>
+</html>
