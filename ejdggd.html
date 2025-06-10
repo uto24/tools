@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Info Extractor</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background-color: #ffffff;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a237e;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        /* Input Area */
+        .input-area label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        #inputData {
+            width: 100%;
+            height: 200px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        /* Output Area */
+        #output-container {
+            margin-top: 25px;
+            border-top: 2px solid #e0e0e0;
+            padding-top: 20px;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #3f51b5;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .output-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #e7e7e7;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .output-field:hover {
+            background-color: #f1f1f1;
+        }
+
+        .field-label {
+            font-weight: bold;
+            color: #444;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+
+        .field-value {
+            font-family: monospace;
+            background-color: #e9ecef;
+            padding: 5px 8px;
+            border-radius: 4px;
+            word-break: break-all;
+            flex-grow: 1;
+        }
+
+        .copy-btn {
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: #3f51b5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: background-color 0.2s, transform 0.1s;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background-color: #303f9f;
+        }
+        
+        .copy-btn:active {
+            transform: scale(0.97);
+        }
+
+        .copy-btn.copied {
+            background-color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>👤 ইউজার তথ্য এক্সট্র্যাক্টর</h1>
+        <div class="input-area">
+            <label for="inputData">এখানে আপনার টেক্সট পেস্ট করুন:</label>
+            <textarea id="inputData" oninput="processData()">➤ User Info | Your Inspire IT ➤
+Name:: Hjdgd
+Number:: +880 01728-107259
+User ID:: Hdh
+Password:: 1234huh
+Referred ID:: yi_r9
+এগুলো সাবধানে রাখবেন, এগুলো ছাড়া টাকা তুলতে বা লগিং করতে পারবেন না !</textarea>
+        </div>
+
+        <div id="output-container">
+             <!-- Processed data will appear here -->
+        </div>
+    </div>
+
+    <script>
+        // *** UPDATED FUNCTION for '::' separator ***
+        function extractValue(lines, keyword) {
+            // Find a line that starts with the keyword (e.g., "Name::")
+            const line = lines.find(l => l.trim().startsWith(keyword));
+            if (line) {
+                // Split the line by '::' and take the second part
+                const parts = line.split('::');
+                if (parts.length > 1) {
+                    return parts[1].trim();
+                }
+            }
+            return 'N/A'; // Return Not Available if not found
+        }
+        
+        function processData() {
+            const inputText = document.getElementById('inputData').value;
+            const lines = inputText.split('\n');
+            const outputContainer = document.getElementById('output-container');
+
+            // *** UPDATED fields list for the new format ***
+            const fields = [
+                { label: 'নাম', keyword: 'Name::', id: 'name' },
+                { label: 'নম্বর', keyword: 'Number::', id: 'number' },
+                { label: 'ইউজার আইডি', keyword: 'User ID::', id: 'userId' },
+                { label: 'পাসওয়ার্ড', keyword: 'Password::', id: 'password' },
+                { label: 'রেফারেল আইডি', keyword: 'Referred ID::', id: 'referredId' }
+            ];
+
+            let outputHTML = '<h2>🔍 এক্সট্র্যাক্ট করা তথ্য</h2>';
+
+            fields.forEach(field => {
+                const value = extractValue(lines, field.keyword);
+                
+                outputHTML += `
+                    <div class="output-field">
+                        <span class="field-label">${field.label}:</span>
+                        <span class="field-value" id="value-${field.id}">${value}</span>
+                        <button class="copy-btn" data-target-id="value-${field.id}">কপি</button>
+                    </div>
+                `;
+            });
+            
+            outputContainer.innerHTML = outputHTML;
+        }
+
+        // Event delegation for copy buttons (no changes needed here)
+        document.getElementById('output-container').addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('copy-btn')) {
+                const button = event.target;
+                const targetId = button.getAttribute('data-target-id');
+                const textToCopy = document.getElementById(targetId).innerText;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = button.innerText;
+                    button.innerText = 'কপি হয়েছে!';
+                    button.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        button.innerText = originalText;
+                        button.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            }
+        });
+
+        // Initial run on page load
+        window.onload = processData;
+    </script>
+
+</body>
+</html>
