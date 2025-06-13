@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 
+      These are placeholder tags. 
+      JavaScript will replace their content immediately based on the URL parameter.
+      We give them IDs to make them easy to select.
+    -->
+    <title id="page-title">Loading...</title>
+    <meta property="og:title" id="og-title" content="Loading Content">
+    <meta property="og:description" id="og-description" content="Please wait while we prepare the content for you.">
+    <meta property="og:image" id="og-image" content="https://placehold.co/1200x630/222222/FFFFFF/png?text=Loading...">
+    <meta property="og:type" content="website">
+
+    <script>
+        // This script runs immediately in the <head> to change the meta tags before the body loads.
+        // This is crucial for social media crawlers.
+        (function() {
+            // 1. Define all possible meta data sets for each ID
+            const metaData = {
+                '1': {
+                    title: "Article One: The Future of AI",
+                    description: "Explore the incredible advancements in Artificial Intelligence and what they mean for our future.",
+                    imageUrl: "https://placehold.co/1200x630/E91E63/FFFFFF/png?text=The+Future+of+AI"
+                },
+                '2': {
+                    title: "Travel Guide: The Hidden Gems of Asia",
+                    description: "Discover breathtaking, off-the-beaten-path destinations across Asia in our exclusive travel guide.",
+                    imageUrl: "https://placehold.co/1200x630/4CAF50/FFFFFF/png?text=Hidden+Gems+of+Asia"
+                },
+                '3': {
+                    title: "Recipe: The Perfect Sourdough Bread",
+                    description: "Master the art of baking with our step-by-step guide to making the perfect loaf of sourdough bread at home.",
+                    imageUrl: "https://placehold.co/1200x630/FF9800/FFFFFF/png?text=Perfect+Sourdough"
+                },
+                '4': {
+                    title: "Product Launch: The New Quantum Laptop",
+                    description: "Introducing the revolutionary Quantum Laptop, with processing speeds you've only dreamed of.",
+                    imageUrl: "https://placehold.co/1200x630/3F51B5/FFFFFF/png?text=Quantum+Laptop"
+                },
+                '5': {
+                    title: "Event: Annual Tech Conference 2024",
+                    description: "Join industry leaders and innovators at the biggest technology conference of the year. Get your tickets now!",
+                    imageUrl: "https://placehold.co/1200x630/9C27B0/FFFFFF/png?text=Tech+Conf+2024"
+                },
+                // Default data if ID is missing or invalid
+                'default': {
+                    title: "Content Loading...",
+                    description: "Please wait while we prepare the content for you. The page is currently loading.",
+                    imageUrl: "https://placehold.co/1200x630/607D8B/FFFFFF/png?text=Loading..."
+                }
+            };
+
+            // 2. Get the 'id' parameter from the current URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            // 3. Select the correct data set. If the id is not found, use the 'default' set.
+            const currentData = metaData[id] || metaData.default;
+
+            // 4. Update the DOM elements in the <head> with the new data
+            document.getElementById('page-title').textContent = currentData.title;
+            document.getElementById('og-title').setAttribute('content', currentData.title);
+            document.getElementById('og-description').setAttribute('content', currentData.description);
+            document.getElementById('og-image').setAttribute('content', currentData.imageUrl);
+        })();
+    </script>
+
+    <style>
+        /* CSS for the loading animation */
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Hide scrollbars */
+        }
+
+        .loader {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- The body only contains the loader element, as requested. -->
+    <div class="loader"></div>
+</body>
+</html>
